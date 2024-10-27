@@ -8,30 +8,81 @@
         </div>
     </header>
 
-    {{!-- Sheet Navigation --}}
     <nav class="sheet-navigation tabs" data-group="primary">
         <a class="item" data-tab="attributes">Attributes</a>
         <a class="item" data-tab="skills">Skills</a>
         <a class="item" data-tab="description">Description</a>
     </nav>
 
-    {{!-- Sheet Body --}}
     <section class="sheet-body">
         <div class="tab attributes" data-group="primary" data-tab="attributes">
-            <h2>Primary Attributes</h2>
-            {{#if system.primaryAttributes}}
-                {{#each system.primaryAttributes as |attr key|}}
-                <div class="attribute flexrow">
-                    <label>{{attr.label}}</label>
-                    <input type="number" name="system.primaryAttributes.{{key}}.value" value="{{attr.value}}"/>
+            <div class="attributes-grid">
+                <div class="primary-attributes">
+                    <h2>Primary Attributes</h2>
+                    {{#each system.primaryAttributes as |attr key|}}
+                    <div class="attribute flexrow">
+                        <label>{{attr.label}}</label>
+                        <div class="attribute-value">
+                            <input type="number" name="system.primaryAttributes.{{key}}.value" value="{{attr.value}}"/>
+                        </div>
+                        <div class="attribute-controls">
+                            <button type="button" class="attribute-check" data-attribute="{{key}}" title="Roll Check">
+                                <i class="fas fa-dice-d10"></i>
+                            </button>
+                        </div>
+                    </div>
+                    {{/each}}
                 </div>
-                {{/each}}
-            {{/if}}
+
+                <div class="derived-attributes">
+                    <h2>Secondary Attributes</h2>
+                    {{#each system.derivedAttributes as |attr key|}}
+                    <div class="attribute flexrow">
+                        <label>{{attr.label}}</label>
+                        <div class="attribute-value">
+                            <input type="number" name="system.derivedAttributes.{{key}}.value" value="{{attr.value}}"/>
+                            <span class="sep">/</span>
+                            <input type="number" name="system.derivedAttributes.{{key}}.max" value="{{attr.max}}" disabled/>
+                        </div>
+                    </div>
+                    {{/each}}
+                </div>
+            </div>
         </div>
 
         <div class="tab skills" data-group="primary" data-tab="skills">
-            <h2>Skills</h2>
+    <header class="skills-header flexrow">
+        <button type="button" class="skill-create" data-type="skill">
+            <i class="fas fa-plus"></i> Add Skill
+        </button>
+    </header>
+
+    {{!-- Organize skills by area --}}
+    {{#each skills as |skillGroup area|}}
+    <div class="skill-area">
+        <h3>{{area}}</h3>
+        <div class="skill-list">
+            {{#each skillGroup as |skill|}}
+            <div class="skill item flexrow" data-item-id="{{skill._id}}">
+                <div class="skill-name">{{skill.name}}</div>
+                <div class="skill-attribute">{{skill.system.governing}}</div>
+                <div class="skill-difficulty">{{skill.system.difficulty}}</div>
+                <div class="skill-number">{{skill.system.successNumber}}</div>
+                <div class="skill-controls">
+                    <a class="skill-check" title="Skill Check"><i class="fas fa-dice-d10"></i></a>
+                    <a class="skill-edit" title="Edit"><i class="fas fa-edit"></i></a>
+                    <a class="skill-delete" title="Delete"><i class="fas fa-trash"></i></a>
+                </div>
+            </div>
+            {{/each}}
         </div>
+    </div>
+    {{/each}}
+        </div>
+
+        <!-- <div class="tab skills" data-group="primary" data-tab="skills">
+             <h2>Skills</h2>
+             </div> -->
 
         <div class="tab description" data-group="primary" data-tab="description">
             <h2>Description</h2>

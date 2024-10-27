@@ -4,23 +4,30 @@ export class Core100Item extends Item {
     super.prepareData();
 
     if (this.type === 'skill') {
-      this._prepareSkillData();
+      // Initialize data structure
+      const system = this.system;
+
+      // Ensure all fields exist
+      system.area = system.area ?? "";
+      system.governing = system.governing ?? "";
+      system.difficulty = system.difficulty ?? "Average";
+      system.successNumber = system.successNumber ?? 0;
+      system.specializations = system.specializations ?? [];
+      system.hasAdvantage = system.hasAdvantage ?? false;
+      system.description = system.description ?? "";
+
+      this._calculateSuccessNumber();
     }
   }
 
-  /**
-   * Prepare skill specific data
-   */
-  _prepareSkillData() {
-    const itemData = this.system;
-    const actorData = this.actor?.system;
+  _calculateSuccessNumber() {
+    const system = this.system;
+    const actor = this.actor;
 
-    if (!actorData) return;
+    if (!actor || !system.governing) return;
 
-    // Calculate Success Number based on governing attribute and difficulty
-    const governingAttr = actorData.primaryAttributes[itemData.governing]?.value || 0;
-    const difficultyMod = itemData.difficulty === "Average" ? 10 : 5;
-    
-    itemData.successNumber = governingAttr + difficultyMod;
+    const governingAttr = actor.system.primaryAttributes[system.governing]?.value || 0;
+    const difficultyMod = system.difficulty === "Average" ? 10 : 5;
+    system.successNumber = governingAttr + difficultyMod;
   }
 }

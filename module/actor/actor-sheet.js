@@ -18,19 +18,14 @@ export class Core100ActorSheet extends ActorSheet {
   getData() {
     const context = super.getData();
     const actorData = this.actor.toObject(false);
-
-    // Add the actor's data to context.system for easier access
     context.system = actorData.system;
-
-    // Add roll data for TinyMCE editors
     context.rollData = context.actor.getRollData();
+    context.skills = this._organizeSkills();
 
-    // Prepare character data and items
     if (actorData.type == 'character') {
       this._prepareItems(context);
       this._prepareCharacterData(context);
     }
-
     return context;
   }
 
@@ -42,14 +37,66 @@ export class Core100ActorSheet extends ActorSheet {
     // Add any item data preparation here
   }
 
+  /**
+   * Organize skills by area
+   * @private
+   */
+  _organizeSkills() {
+    const skills = new Map();
+
+    // Add all skill areas even if empty
+    const areas = [
+      "Athletics",
+      "Attention",
+      "Education",
+      "Fieldcraft",
+      "Interpersonal",
+      "Martial",
+      "Material Crafts",
+      "Medicine",
+      "Operation",
+      "Spiritual"
+    ];
+
+    areas.forEach(area => skills.set(area, []));
+
+    // Organize items by type
+    for (let item of this.actor.items) {
+      if (item.type === 'skill') {
+        const area = item.system.area || "Uncategorized";
+        if (!skills.has(area)) skills.set(area, []);
+        skills.get(area).push(item);
+      }
+    }
+
+    // Convert to object for handlebars
+    const skillsObject = {};
+    for (let [key, value] of skills) {
+      if (value.length > 0) skillsObject[key] = value;
+    }
+
+    return skillsObject;
+  }
+
   /** @override */
   activateListeners(html) {
     super.activateListeners(html);
 
+    // Add listeners for attribute rolls
+    html.find('.attribute-check').click(this._onAttributeCheck.bind(this));
+
+    // Skill checks
+    html.find('.skill-check').click(this._onSkillCheck.bind(this));
+
+
     // Everything below here is only needed if the sheet is editable
     if (!this.isEditable) return;
 
-    // Render the item sheet for viewing/editing prior to the editable check.
+    // Add Skill
+    html.find('.skill-create').click(this._onItemCreate.bind(this));  // Add this line
+
+
+    // Render the item sheet for viewing/editing
     html.find('.item-edit').click(ev => {
       const li = $(ev.currentTarget).parents(".item");
       const item = this.actor.items.get(li.data("itemId"));
@@ -65,29 +112,133 @@ export class Core100ActorSheet extends ActorSheet {
   }
 
   /**
-   * Handle creating a new Owned Item for the actor using initial data defined in the HTML dataset
+   * Handle attribute checks (1d100)
+   * @param {Event} event   The originating click event
+   * @private
+   */
+  async _onAttributeCheck(event) {
+    event.preventDefault();
+    const element = event.currentTarget;
+    const attribute = element.dataset.attribute;
+
+    const attrValue = this.actor.system.primaryAttributes[attribute].value;
+    const attrLabel = this.actor.system.primaryAttributes[attribute].label;
+
+    const roll = await new Roll("1d100").evaluate({async: true});
+    const success = roll.total <= attrValue;
+
+    const messageContent = `
+      <h2>${attrLabel} Check</h2>
+      <p>Target: ${attrValue}</p>
+      <p>Roll: ${roll.total}</p>
+      <p style="color: ${success ? 'green' : 'red'}">
+        ${success ? 'Success!' : 'Failure'}
+      </p>
+    `;
+
+    ChatMessage.create({
+      user: game.user.id,
+      speaker: ChatMessage.getSpeaker({ actor: this.actor }),
+      content: messageContent,
+      type: CONST.CHAT_MESSAGE_TYPES.ROLL,
+      roll: roll
+    });
+  }
+
+  /**
+   * Handle attribute generation (4d10+30)
+   * @param {Event} event   The originating click event
+   * @private
+   */
+  async _onAttributeGenerate(event) {
+    event.preventDefault();
+    const element = event.currentTarget;
+    const attribute = element.dataset.attribute;
+
+    const roll = await new Roll("4d10+30").evaluate({async: true});
+
+    await this.actor.update({
+      [`system.primaryAttributes.${attribute}.value`]: roll.total
+    });
+
+    const messageContent = `
+      <h2>${this.actor.system.primaryAttributes[attribute].label} Generation</h2>
+      <p>Roll: ${roll.total}</p>
+    `;
+
+    ChatMessage.create({
+      user: game.user.id,
+      speaker: ChatMessage.getSpeaker({ actor: this.actor }),
+      content: messageContent,
+      type: CONST.CHAT_MESSAGE_TYPES.ROLL,
+      roll: roll
+    });
+  }
+
+  /**
+   * Handle creating a new Owned Item for the actor
    * @param {Event} event   The originating click event
    * @private
    */
   async _onItemCreate(event) {
     event.preventDefault();
-    const element = event.currentTarget;
-    // Get the type of item to create.
-    const type = element.dataset.type;
-    // Grab any data associated with this control.
-    const data = duplicate(element.dataset);
-    // Initialize a default name.
-    const name = `New ${type.capitalize()}`;
-    // Prepare the item object.
-    const itemData = {
-      name: name,
-      type: type,
-      data: data
-    };
-    // Remove the type from the dataset since it's in the itemData.type prop.
-    delete itemData.data["type"];
 
-    // Finally, create the item!
-    return await Item.create(itemData, {parent: this.actor});
+    console.log("Creating new skill");
+    const itemData = {
+      name: "New Skill",
+      type: "skill",
+      system: {
+        area: "",
+        governing: "",
+        difficulty: "Average",
+        successNumber: 0,
+        specializations: [],
+        hasAdvantage: false,
+        description: ""
+      }
+    };
+
+    console.log("Item creation data:", itemData);
+
+    try {
+      const created = await Item.create(itemData, {parent: this.actor});
+      console.log("Skill created:", created);
+      created.sheet.render(true);
+    } catch (err) {
+      console.error("Error creating skill:", err);
+    }
   }
+
+  /**
+   * Handle skill check rolls
+   * @param {Event} event The originating click event
+   * @private
+   */
+  async _onSkillCheck(event) {
+    event.preventDefault();
+    const element = event.currentTarget;
+    const itemId = $(element).closest("[data-item-id]").data("itemId");
+    const skill = this.actor.items.get(itemId);
+
+    if (!skill) return;
+
+    const roll = await new Roll("1d100").evaluate({async: true});
+    const success = roll.total <= skill.system.successNumber;
+
+    const messageContent = `
+        <h2>${skill.name} Check</h2>
+        <p>Target: ${skill.system.successNumber}</p>
+        <p>Roll: ${roll.total}</p>
+        <p style="color: ${success ? 'green' : 'red'}">${success ? 'Success!' : 'Failure'}</p>
+    `;
+
+    ChatMessage.create({
+      user: game.user.id,
+      speaker: ChatMessage.getSpeaker({ actor: this.actor }),
+      content: messageContent,
+      type: CONST.CHAT_MESSAGE_TYPES.ROLL,
+      roll: roll
+    });
+  }
+
 }

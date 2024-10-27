@@ -60,7 +60,8 @@
 }
 
 /* Attributes */
-.core100 .attributes {
+
+.core100 .attributes-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 20px;
@@ -68,52 +69,76 @@
 
 .core100 .primary-attributes,
 .core100 .derived-attributes {
-    padding: 10px;
+    background: rgba(0, 0, 0, 0.05);
     border: 1px solid #AAA;
     border-radius: 5px;
+    padding: 10px;
 }
 
 .core100 .attribute {
-    margin: 5px 0;
-    padding: 5px;
-    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px;
+    margin: 4px 0;
 }
 
-.core100 .attribute:nth-child(even) {
-    background: rgba(0, 0, 0, 0.05);
-}
-
-.core100 .attribute-label {
+.core100 .attribute label {
     flex: 1;
     font-weight: bold;
 }
 
 .core100 .attribute-value {
-    flex: 0 0 100px;
     display: flex;
     align-items: center;
-    justify-content: center;
-    gap: 5px;
+    gap: 4px;
 }
 
 .core100 .attribute-value input {
+    width: 50px;
     text-align: center;
-    width: 45px;
+}
+
+.core100 .attribute-value .sep {
+    color: #666;
 }
 
 .core100 .attribute-controls {
-    flex: 0 0 30px;
-    text-align: center;
+    display: flex;
+    gap: 4px;
 }
 
-.core100 .attribute-roll {
+.core100 .attribute-check {
+    background: #DDD;
+    border: 1px solid #AAA;
+    border-radius: 3px;
+    padding: 4px;
+    width: 28px;
     cursor: pointer;
+    color: #444;
 }
 
-.core100 .attribute-roll:hover {
+.core100 .attribute-check:hover {
+    background: #CCC;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
     color: #000;
-    text-shadow: 0 0 10px red;
 }
+
+.core100 h2 {
+    border-bottom: 2px solid #AAA;
+    margin-bottom: 10px;
+    padding-bottom: 5px;
+    color: #444;
+    font-size: 1.2em;
+}
+
+/* Make disabled inputs look slightly different but still readable */
+.core100 input:disabled {
+    background: #F0F0F0;
+    color: #666;
+    border: 1px solid #CCC;
+}
+
 
 /* Flexbox utilities */
 .flexrow {
@@ -122,4 +147,186 @@
     flex-wrap: wrap;
     justify-content: flex-start;
     align-items: center;
+}
+
+.core100 .attribute-roll,
+.core100 .attribute-create {
+    width: auto;
+    height: 24px;
+    margin-left: 4px;
+    background: #DDD;
+    border: 1px solid #AAA;
+    border-radius: 3px;
+    font-size: 12px;
+    line-height: 24px;
+    cursor: pointer;
+}
+
+.core100 .attribute-roll {
+    width: 24px;
+    padding: 0;
+}
+
+.core100 .attribute-create {
+    padding: 0 8px;
+}
+
+.core100 .attribute-roll:hover,
+.core100 .attribute-create:hover {
+    background: #CCC;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+}
+
+.core100 .attribute-roll i {
+    margin: 0;
+}
+
+.core100 .attribute {
+    display: flex;
+    align-items: center;
+    padding: 4px;
+    margin: 4px 0;
+}
+
+.core100 .attribute label {
+    flex: 1;
+    margin-right: 8px;
+    font-weight: bold;
+}
+
+.core100 .attribute input {
+    width: 60px;
+    height: 24px;
+    text-align: center;
+}
+
+
+/* Skills Tab */
+.core100 .skills-header {
+    margin-bottom: 8px;
+}
+
+.core100 .skill-area {
+    margin-bottom: 20px;
+}
+
+.core100 .skill-area h3 {
+    color: #444;
+    border-bottom: 1px solid #AAA;
+    margin-bottom: 8px;
+    padding-bottom: 4px;
+}
+
+.core100 .skill {
+    padding: 4px;
+    margin: 4px 0;
+    border-radius: 4px;
+    align-items: center;
+}
+
+.core100 .skill:nth-child(even) {
+    background: rgba(0, 0, 0, 0.05);
+}
+
+.core100 .skill-name {
+    flex: 2;
+    font-weight: bold;
+}
+
+.core100 .skill-attribute,
+.core100 .skill-difficulty {
+    flex: 1;
+    text-align: center;
+}
+
+.core100 .skill-number {
+    flex: 0 0 50px;
+    text-align: center;
+}
+
+.core100 .skill-controls {
+    flex: 0 0 80px;
+    text-align: right;
+}
+
+.core100 .skill-controls a {
+    padding: 0 4px;
+    color: #666;
+}
+
+.core100 .skill-controls a:hover {
+    color: #000;
+    text-shadow: 0 0 3px var(--color-shadow-primary);
+}
+
+.core100 .skill-create {
+    background: #DDD;
+    border: 1px solid #AAA;
+    border-radius: 3px;
+    padding: 4px 8px;
+    cursor: pointer;
+}
+
+.core100 .skill-create:hover {
+    background: #CCC;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+}
+
+/* Skill Sheet Styles */
+.core100.sheet.item .specializations {
+    margin: 1em 0;
+}
+
+.core100.sheet.item .specializations-header {
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5em;
+}
+
+.core100.sheet.item .specialization {
+    margin: 0.5em 0;
+    gap: 0.5em;
+}
+
+.core100.sheet.item .specialization input {
+    flex: 1;
+}
+
+.core100.sheet.item .delete-specialization {
+    color: #666;
+    cursor: pointer;
+}
+
+.core100.sheet.item .delete-specialization:hover {
+    color: #000;
+    text-shadow: 0 0 3px var(--color-shadow-primary);
+}
+
+.core100.sheet.item .add-specialization {
+    background: #DDD;
+    border: 1px solid #AAA;
+    border-radius: 3px;
+    padding: 2px 6px;
+    font-size: 0.9em;
+}
+
+.core100.sheet.item .add-specialization:hover {
+    background: #CCC;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+}
+
+.core100.sheet.item .form-group {
+    margin: 1em 0;
+}
+
+.core100.sheet.item .form-group label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 0.3em;
+}
+
+.core100.sheet.item .notes {
+    color: #666;
+    font-size: 0.9em;
+    margin-top: 0.2em;
 }

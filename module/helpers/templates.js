@@ -4,12 +4,12 @@
  * @return {Promise}
  */
 export const preloadHandlebarsTemplates = async function() {
-    return loadTemplates([
-        // Actor Sheet Partials
-        "systems/core100/templates/actor/parts/actor-attributes.html",
-        "systems/core100/templates/actor/parts/actor-skills.html",
-        
-        // Item Sheet Partials
-        "systems/core100/templates/item/parts/item-description.html"
-    ]);
+  const templatePaths = [
+    // Actor Sheet
+    "systems/core100/templates/actor/actor-sheet.html",
+    // Item Sheet
+    "systems/core100/templates/item/item-sheet.html"
+  ];
+
+  return loadTemplates(templatePaths);
 };

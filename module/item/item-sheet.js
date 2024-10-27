@@ -1,52 +1,53 @@
 export class Core100ItemSheet extends ItemSheet {
-  /** @override */
   static get defaultOptions() {
-    return mergeObject(super.defaultOptions, {
+    return foundry.utils.mergeObject(super.defaultOptions, {
       classes: ["core100", "sheet", "item"],
       template: "systems/core100/templates/item/item-sheet.html",
       width: 520,
       height: 480,
-      tabs: [{ navSelector: ".sheet-tabs", contentSelector: ".sheet-body", initial: "description" }]
+      submitOnClose: true,
+      submitOnChange: true
     });
   }
 
   /** @override */
-  getData() {
-    const context = super.getData();
-    
-    context.systemData = context.item.system;
-    context.skillAreas = [
-      "Athletics",
-      "Attention",
-      "Education",
-      "Fieldcraft",
-      "Interpersonal",
-      "Martial",
-      "Material Crafts",
-      "Medicine",
-      "Operation",
-      "Spiritual"
-    ];
-
-    context.attributes = {
-      vgr: "Vigor",
-      grc: "Grace",
-      ins: "Insight",
-      prs: "Presence"
-    };
-
-    context.difficulties = ["Average", "Demanding"];
-
-    return context;
+  async _updateObject(event, formData) {
+    return this.object.update(formData);
   }
 
-  /** @override */
+  getData() {
+    const context = super.getData();
+    const itemData = this.object;
+
+    // Return data to the template
+    return {
+      item: itemData,
+      system: itemData.system,
+      cssClass: context.cssClass
+    };
+  }
+
   activateListeners(html) {
     super.activateListeners(html);
 
     // Everything below here is only needed if the sheet is editable
     if (!this.isEditable) return;
 
-    // Add any special button handlers, etc. here
+    // Add inventory item
+    html.find('.item-create').click(this._onItemCreate.bind(this));
+
+    // Update Inventory Item
+    html.find('.item-edit').click(ev => {
+      const li = $(ev.currentTarget).parents(".item");
+      const item = this.actor.items.get(li.data("itemId"));
+      item.sheet.render(true);
+    });
+
+    // Delete Inventory Item
+    html.find('.item-delete').click(ev => {
+      const li = $(ev.currentTarget).parents(".item");
+      const item = this.actor.items.get(li.data("itemId"));
+      item.delete();
+    });
   }
 }
