@@ -12,7 +12,13 @@ export class Core100ItemSheet extends ItemSheet {
 
   /** @override */
   async _updateObject(event, formData) {
-    return this.object.update(formData);
+    // Update item data based on form input
+    await this.object.update(formData);
+
+    // Recalculate success number after update
+    if (this.object.type === 'skill') {
+      this.object._calculateSuccessNumber();
+    }
   }
 
   getData() {
@@ -27,11 +33,29 @@ export class Core100ItemSheet extends ItemSheet {
     };
   }
 
+  /** @override */
   activateListeners(html) {
     super.activateListeners(html);
 
     // Everything below here is only needed if the sheet is editable
     if (!this.isEditable) return;
+
+    // Handle adding a new specialization
+    html.find('.specialization-add').click(ev => {
+      ev.preventDefault();
+      const specializations = this.object.system.specializations || [];
+      specializations.push("");  // Add an empty specialization
+      this.object.update({ 'system.specializations': specializations });
+    });
+
+    // Handle removing an existing specialization
+    html.find('.specialization-remove').click(ev => {
+      ev.preventDefault();
+      const index = $(ev.currentTarget).siblings('input').index();
+      const specializations = this.object.system.specializations || [];
+      specializations.splice(index, 1);  // Remove the specialization
+      this.object.update({ 'system.specializations': specializations });
+    });
 
     // Add inventory item
     html.find('.item-create').click(this._onItemCreate.bind(this));

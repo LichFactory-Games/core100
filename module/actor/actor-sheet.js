@@ -93,29 +93,71 @@ export class Core100ActorSheet extends ActorSheet {
     if (!this.isEditable) return;
 
     // Add Skill
-    html.find('.skill-create').click(this._onItemCreate.bind(this));  // Add this line
+    html.find('.skill-create').click(this._onItemCreate.bind(this));
 
-
-    // Render the item sheet for viewing/editing
-    html.find('.item-edit').click(ev => {
-      const li = $(ev.currentTarget).parents(".item");
-      const item = this.actor.items.get(li.data("itemId"));
-      item.sheet.render(true);
+    // Skill Edit
+    html.find('.skill-edit').click(ev => {
+      const skillElement = $(ev.currentTarget).closest(".skill");
+      const skillId = skillElement.data("item-id");
+      const skill = this.actor.items.get(skillId);
+      if (skill) skill.sheet.render(true);
     });
 
-    // Delete Inventory Item
-    html.find('.item-delete').click(ev => {
-      const li = $(ev.currentTarget).parents(".item");
-      const item = this.actor.items.get(li.data("itemId"));
-      item.delete();
+    // Skill Delete
+    html.find('.skill-delete').click(ev => {
+      const skillElement = $(ev.currentTarget).closest(".skill");
+      const skillId = skillElement.data("item-id");
+      const skill = this.actor.items.get(skillId);
+      if (skill) {
+        skill.delete();
+      }
     });
   }
+
+  /**
+   * Determine roll outcome based on target value and roll result.
+   * @param {number} rollResult - The total of the d100 roll.
+   * @param {number} target - The target value to beat (attribute or skill's success number).
+   * @returns {Object} An object containing the outcome and style.
+   */
+  evaluateRollOutcome(rollResult, target) {
+    const isDoubles = rollResult % 11 === 0;
+    let outcome = "";
+    let outcomeStyle = "color: black"; // Default style
+
+    if (rollResult <= target) { // Success cases
+      if (isDoubles) {
+        outcome = "Ace";
+        outcomeStyle = "color: goldenrod";
+      } else if (rollResult <= Math.floor(target / 2)) {
+        outcome = "Success";
+        outcomeStyle = "color: green";
+      } else {
+        outcome = "Partial Success";
+        outcomeStyle = "color: darkblue";
+      }
+    } else { // Failure cases
+      if (isDoubles) {
+        outcome = "Fumble";
+        outcomeStyle = "color: red";
+      } else if (rollResult <= Math.floor((100 - target) / 2) + target) {
+        outcome = "Partial Failure";
+        outcomeStyle = "color: brown";
+      } else {
+        outcome = "Failure";
+        outcomeStyle = "color: crimson";
+      }
+    }
+    return { outcome, outcomeStyle };
+  }
+
 
   /**
    * Handle attribute checks (1d100)
    * @param {Event} event   The originating click event
    * @private
    */
+
   async _onAttributeCheck(event) {
     event.preventDefault();
     const element = event.currentTarget;
@@ -124,46 +166,17 @@ export class Core100ActorSheet extends ActorSheet {
     const attrValue = this.actor.system.primaryAttributes[attribute].value;
     const attrLabel = this.actor.system.primaryAttributes[attribute].label;
 
-    // Roll d100
     const roll = await new Roll("1d100").evaluate({async: true});
     const rollResult = roll.total;
-    const isDoubles = rollResult % 11 === 0;
 
-    // Calculate degrees of success and failure
-    let outcome = "";
-    let outcomeStyle = "color: black";  // Default style, will update per outcome
+    const { outcome, outcomeStyle } = this.evaluateRollOutcome(rollResult, attrValue);
 
-    if (rollResult <= attrValue) {  // Successful roll
-      if (isDoubles) {
-        outcome = "Ace";
-        outcomeStyle = "color: goldenrod";
-      } else if (rollResult <= Math.floor(attrValue / 2)) {
-        outcome = "Success";
-        outcomeStyle = "color: green";
-      } else {
-        outcome = "Partial Success";
-        outcomeStyle = "color: darkblue";
-      }
-    } else {  // Failed roll
-      if (isDoubles) {
-        outcome = "Fumble";
-        outcomeStyle = "color: red";
-      } else if (rollResult <= Math.floor((100 - attrValue) / 2) + attrValue) {
-        outcome = "Partial Failure";
-        outcomeStyle = "color: brown";
-      } else {
-        outcome = "Failure";
-        outcomeStyle = "color: crimson";
-      }
-    }
-
-    // Construct the chat message content with the outcome and style
     const messageContent = `
-  <h2>${attrLabel} Check</h2>
-  <p>Target: ${attrValue}</p>
-  <p>Roll: ${rollResult}</p>
-  <p>Outcome: <span style="${outcomeStyle}">${outcome}</span></p>
-`;
+      <h2>${attrLabel} Check</h2>
+      <p>Target: ${attrValue}</p>
+      <p>Roll: ${rollResult}</p>
+      <p>Outcome: <span style="${outcomeStyle}">${outcome}</span></p>
+    `;
 
     ChatMessage.create({
       user: game.user.id,
@@ -173,6 +186,7 @@ export class Core100ActorSheet extends ActorSheet {
       roll: roll
     });
   }
+
 
   /**
    * Handle attribute generation (4d10+30)
@@ -251,23 +265,36 @@ export class Core100ActorSheet extends ActorSheet {
 
     if (!skill) return;
 
-    const roll = await new Roll("1d100").evaluate({async: true});
-    const success = roll.total <= skill.system.successNumber;
+    const successNumber = skill.system.successNumber;
+    const hasSpecialization = skill.system.specializations && skill.system.specializations.length > 0;
+
+    // Roll with or without Advantage based on specialization
+    let rollResult;
+    if (hasSpecialization) {
+      const roll1 = await new Roll("1d100").evaluate({async: true});
+      const roll2 = await new Roll("1d100").evaluate({async: true});
+      rollResult = Math.min(roll1.total, roll2.total); // Advantage: take the lower roll
+    } else {
+      const roll = await new Roll("1d100").evaluate({async: true});
+      rollResult = roll.total;
+    }
+
+    // Get outcome and style based on the roll result
+    const { outcome, outcomeStyle } = this.evaluateRollOutcome(rollResult, successNumber);
 
     const messageContent = `
         <h2>${skill.name} Check</h2>
-        <p>Target: ${skill.system.successNumber}</p>
-        <p>Roll: ${roll.total}</p>
-        <p style="color: ${success ? 'green' : 'red'}">${success ? 'Success!' : 'Failure'}</p>
+        <p>Target: ${successNumber}</p>
+        <p>Roll: ${rollResult}</p>
+        <p>Outcome: <span style="${outcomeStyle}">${outcome}</span></p>
     `;
 
     ChatMessage.create({
       user: game.user.id,
       speaker: ChatMessage.getSpeaker({ actor: this.actor }),
       content: messageContent,
-      type: CONST.CHAT_MESSAGE_STYLES.ROLL,
-      roll: roll
+      type: CONST.CHAT_MESSAGE_TYPES.ROLL,
+      roll: rollResult
     });
   }
-
 }

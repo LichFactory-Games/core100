@@ -7,15 +7,6 @@ import { Core100ActorSheet } from "./actor/actor-sheet.js";
 import { Core100Item } from "./item/item.js";
 import { Core100ItemSheet } from "./item/item-sheet.js";
 
-console.log("core100 imports completed");
-console.log("Available classes:", {
-  Core100Actor,
-  Core100ActorSheet,
-  Core100Item,
-  Core100ItemSheet,
-  ItemSheet
-});
-
 /* -------------------------------------------- */
 /*  Handlebars Helpers                          */
 /* -------------------------------------------- */
@@ -80,44 +71,6 @@ Hooks.once("init", async function() {
     console.error("Template preload error:", error);
   }
 });
-
-// Hooks.once("init", async function() {
-//   console.log("core100 | Initializing Core 100 System");
-
-//   // Define custom Document classes
-//   CONFIG.Actor.documentClass = Core100Actor;
-//   CONFIG.Item.documentClass = Core100Item;
-//   console.log("core100 | Document classes configured");
-
-//   // Register sheet application classes
-//   try {
-//     Actors.unregisterSheet("core", ActorSheet);
-//     Actors.registerSheet("core100", Core100ActorSheet, { makeDefault: true });
-//     console.log("core100 | Actor sheet registered");
-
-//     Items.unregisterSheet("core", ItemSheet);
-//     Items.registerSheet("core100", Core100ItemSheet, { makeDefault: true });
-//     console.log("core100 | Item sheet registered");
-//   } catch (error) {
-//     console.error("core100 | Error registering sheets:", error);
-//   }
-
-//   // Register settings
-//   registerSettings();
-//   console.log("core100 | Settings registered");
-
-//   // Register Handlebars helpers
-//   registerHandlebarsHelpers();
-//   console.log("core100 | Handlebars helpers registered");
-
-//   // Preload templates
-//   try {
-//     await preloadHandlebarsTemplates();
-//     console.log("core100 | Templates preloaded");
-//   } catch (error) {
-//     console.error("core100 | Template preload error:", error);
-//   }
-// });
 
 /* -------------------------------------------- */
 /*  Ready Hook                                  */
