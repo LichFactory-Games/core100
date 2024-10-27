@@ -1,0 +1,24 @@
+<div class="primary-attributes">
+    <h2>Primary Attributes</h2>
+    {{#each system.primaryAttributes as |attr key|}}
+    <div class="attribute flexrow">
+        <label>{{attr.label}}</label>
+        <input type="number" name="system.primaryAttributes.{{key}}.value" value="{{attr.value}}" data-dtype="Number"/>
+        <button class="attribute-roll" data-attribute="{{key}}"><i class="fas fa-dice-d20"></i></button>
+    </div>
+    {{/each}}
+</div>
+
+<div class="derived-attributes">
+    <h2>Derived Attributes</h2>
+    {{#each system.derivedAttributes as |attr key|}}
+    <div class="attribute flexrow">
+        <label>{{attr.label}}</label>
+        <div class="attribute-value">
+            <input type="number" name="system.derivedAttributes.{{key}}.value" value="{{attr.value}}" data-dtype="Number"/>
+            <span>/</span>
+            <input type="number" name="system.derivedAttributes.{{key}}.max" value="{{attr.max}}" data-dtype="Number" disabled/>
+        </div>
+    </div>
+    {{/each}}
+</div>

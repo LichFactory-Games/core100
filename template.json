@@ -1,0 +1,81 @@
+{
+  "Actor": {
+    "types": ["character"],
+    "templates": {
+      "baseAttributes": {
+        "primaryAttributes": {
+          "vgr": {
+            "value": 30,
+            "label": "Vigor",
+            "description": "Physical strength, endurance, and resilience"
+          },
+          "grc": {
+            "value": 30,
+            "label": "Grace",
+            "description": "Agility, coordination, and precision"
+          },
+          "ins": {
+            "value": 30,
+            "label": "Insight",
+            "description": "Mental acuity, including memory, reasoning, and perception"
+          },
+          "prs": {
+            "value": 30,
+            "label": "Presence",
+            "description": "Charm, leadership, and appeal"
+          }
+        },
+        "derivedAttributes": {
+          "hlt": {
+            "value": 0,
+            "max": 0,
+            "label": "Health",
+            "description": "Physical well-being (VGR / 5)"
+          },
+          "wd": {
+            "value": 0,
+            "max": 0,
+            "label": "Wounds",
+            "description": "Severity of damage (HLT / 5)"
+          },
+          "grt": {
+            "value": 0,
+            "max": 0,
+            "label": "Grit",
+            "description": "Mental resilience ((VGR + PRS) / 5)"
+          },
+          "poi": {
+            "value": 0,
+            "max": 0,
+            "label": "Poise",
+            "description": "Mental stability ((INS + GRT) / 5)"
+          }
+        }
+      }
+    },
+    "character": {
+      "templates": ["baseAttributes"],
+      "details": {
+        "biography": "",
+        "notes": ""
+      }
+    }
+  },
+  "Item": {
+    "types": ["skill"],
+    "templates": {
+      "base": {
+        "description": ""
+      }
+    },
+    "skill": {
+      "templates": ["base"],
+      "area": "",
+      "governing": "",
+      "difficulty": "Average",
+      "successNumber": 0,
+      "specialization": "",
+      "hasAdvantage": false
+    }
+  }
+}

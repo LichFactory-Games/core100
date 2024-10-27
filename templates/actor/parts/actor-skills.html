@@ -1,0 +1,17 @@
+{{#each skillsByArea as |skills area|}}
+<div class="skill-area">
+    <h3>{{area}}</h3>
+    {{#each skills as |skill|}}
+    <div class="item skill flexrow" data-item-id="{{skill._id}}">
+        <div class="skill-name">{{skill.name}}</div>
+        <div class="skill-success">{{skill.system.successNumber}}</div>
+        <div class="skill-controls">
+            <a class="skill-roll" title="Roll Skill"><i class="fas fa-dice-d20"></i></a>
+            <a class="skill-edit" title="Edit Skill"><i class="fas fa-edit"></i></a>
+            <a class="skill-delete" title="Delete Skill"><i class="fas fa-trash"></i></a>
+        </div>
+    </div>
+    {{/each}}
+</div>
+{{/each}}
+<button class="skill-create" type="button"><i class="fas fa-plus"></i> Add Skill</button>

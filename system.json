@@ -1,0 +1,35 @@
+{
+  "id": "core100",
+  "title": "Core 100 System",
+  "description": "A d100-based RPG system emphasizing attribute-derived skills and specializations",
+  "version": "1.0.0",
+  "compatibility": {
+    "minimum": "11",
+    "verified": "12",
+    "maximum": "12"
+  },
+  "authors": [
+    {
+        "name": "Colin McLear",
+        "email": "",
+        "url": ""
+    }
+  ],
+  "esmodules": ["module/core100.js"],
+  "styles": ["styles/core100.css"],
+  "languages": [
+    {
+      "lang": "en",
+      "name": "English",
+      "path": "languages/en.json"
+    }
+  ],
+  "gridDistance": 1,
+  "gridUnits": "m",
+    "primaryTokenAttribute": "hlt",
+    "secondaryTokenAttribute": "poi",
+    "url": "",
+    "manifest": "",
+    "download": "",
+    "license": "LICENSE.txt"
+}

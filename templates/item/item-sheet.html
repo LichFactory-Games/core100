@@ -1,0 +1,79 @@
+<form class="{{cssClass}}" autocomplete="off">
+    <header class="sheet-header">
+        <div class="header-fields">
+            <h1 class="skillname">
+                <input name="name" type="text" value="{{item.name}}" placeholder="Skill Name"/>
+            </h1>
+        </div>
+    </header>
+
+    {{!-- Sheet Tab Navigation --}}
+    <nav class="sheet-tabs tabs" data-group="primary">
+        <a class="item" data-tab="attributes">Attributes</a>
+        <a class="item" data-tab="description">Description</a>
+    </nav>
+
+    {{!-- Sheet Body --}}
+    <section class="sheet-body">
+        {{!-- Attributes Tab --}}
+        <div class="tab attributes" data-group="primary" data-tab="attributes">
+            <div class="form-group">
+                <label>Skill Area</label>
+                <select name="system.area">
+                    {{#select system.area}}
+                    <option value=""></option>
+                    {{#each skillAreas as |area|}}
+                    <option value="{{area}}">{{area}}</option>
+                    {{/each}}
+                    {{/select}}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Governing Attribute</label>
+                <select name="system.governing">
+                    {{#select system.governing}}
+                    <option value=""></option>
+                    {{#each attributes as |label key|}}
+                    <option value="{{key}}">{{label}}</option>
+                    {{/each}}
+                    {{/select}}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Difficulty</label>
+                <select name="system.difficulty">
+                    {{#select system.difficulty}}
+                    {{#each difficulties as |diff|}}
+                    <option value="{{diff}}">{{diff}}</option>
+                    {{/each}}
+                    {{/select}}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Success Number</label>
+                <input type="text" value="{{system.successNumber}}" disabled/>
+                <p class="notes">(Automatically calculated from governing attribute + difficulty modifier)</p>
+            </div>
+
+            <div class="form-group">
+                <label>Specialization</label>
+                <input type="text" name="system.specialization" value="{{system.specialization}}"/>
+            </div>
+
+            <div class="form-group">
+                <label>
+                    <input type="checkbox" name="system.hasAdvantage" {{checked system.hasAdvantage}}/>
+                    Has Advantage (from Specialization)
+                </label>
+            </div>
+        </div>
+
+        {{!-- Description Tab --}}
+        <div class="tab description" data-group="primary" data-tab="description">
+            {{editor content=system.description target="system.description" button=true owner=owner editable=editable}}
+        </div>
+    </section>
+</form>
