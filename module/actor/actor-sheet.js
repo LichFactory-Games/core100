@@ -42,6 +42,7 @@ export class Core100ActorSheet extends ActorSheet {
    * @private
    */
   _organizeSkills() {
+    console.log("Raw skill specializations example:", this.actor.items.find(i => i.type === 'skill')?.system?.specializations);
     const skills = new Map();
 
     // Add all skill areas even if empty
@@ -88,6 +89,8 @@ export class Core100ActorSheet extends ActorSheet {
     // Skill checks
     html.find('.skill-check').click(this._onSkillCheck.bind(this));
 
+    // Specialization checks
+    html.find('.spec-check').click(this._onSpecializationCheck.bind(this));
 
     // Everything below here is only needed if the sheet is editable
     if (!this.isEditable) return;
@@ -188,6 +191,59 @@ export class Core100ActorSheet extends ActorSheet {
   }
 
   /**
+   * Handle specialization check rolls
+   * @param {Event} event The originating click event
+   * @private
+   */
+  async _onSpecializationCheck(event) {
+    event.preventDefault();
+    const element = event.currentTarget;
+    const specDiv = element.closest('.specialization');
+
+    // Get the skill and specialization data
+    const itemId = specDiv.dataset.itemId;
+    const specIndex = Number(specDiv.dataset.specIndex);
+    const skill = this.actor.items.get(itemId);
+
+    if (!skill || !skill.system.specializations[specIndex]) {
+      console.error("Could not find skill or specialization");
+      return;
+    }
+
+    const successNumber = skill.system.successNumber;
+    const specializationName = skill.system.specializations[specIndex];
+
+    // Roll with Advantage (two rolls, take the better)
+    const roll1 = new Roll("1d100");
+    const roll2 = new Roll("1d100");
+
+    await roll1.evaluate();
+    await roll2.evaluate();
+
+    const rollResult = Math.min(roll1.total, roll2.total); // Take the better roll
+
+    // Get outcome using your existing method
+    const { outcome, outcomeStyle } = this.evaluateRollOutcome(rollResult, successNumber);
+
+    const messageContent = `
+        <h2>${skill.name}: ${specializationName}</h2>
+        <p>Target: ${successNumber}</p>
+        <p>Rolls: ${roll1.total}, ${roll2.total} (taking ${rollResult})</p>
+        <p><em>Rolling with Advantage due to Specialization</em></p>
+        <p>Outcome: <span style="${outcomeStyle}">${outcome}</span></p>
+    `;
+
+    await ChatMessage.create({
+      user: game.user.id,
+      speaker: ChatMessage.getSpeaker({ actor: this.actor }),
+      content: messageContent,
+      rolls: [roll1, roll2],
+      sound: CONFIG.sounds.dice
+    });
+  }
+
+
+  /**
    * Handle skill check rolls
    * @param {Event} event The originating click event
    * @private
@@ -201,34 +257,19 @@ export class Core100ActorSheet extends ActorSheet {
     if (!skill) return;
 
     const successNumber = skill.system.successNumber;
-    const hasSpecialization = skill.system.specializations && skill.system.specializations.length > 0;
 
-    // Roll with or without Advantage based on specialization
-    let rollResult;
-    const rolls = [];
-
-    if (hasSpecialization) {
-      const roll1 = new Roll("1d100");
-      const roll2 = new Roll("1d100");
-      await roll1.evaluate();
-      await roll2.evaluate();
-      rolls.push(roll1, roll2);
-      rollResult = Math.min(roll1.total, roll2.total); // Advantage: take the lower roll
-    } else {
-      const roll = new Roll("1d100");
-      await roll.evaluate();
-      rolls.push(roll);
-      rollResult = roll.total;
-    }
+    // Single roll for base skill
+    const roll = new Roll("1d100");
+    await roll.evaluate();
+    const rollResult = roll.total;
 
     // Get outcome and style based on the roll result
     const { outcome, outcomeStyle } = this.evaluateRollOutcome(rollResult, successNumber);
 
-    let messageContent = `
+    const messageContent = `
         <h2>${skill.name} Check</h2>
         <p>Target: ${successNumber}</p>
         <p>Roll: ${rollResult}</p>
-        ${hasSpecialization ? `<p><em>Rolling with Advantage due to Specialization</em></p>` : ''}
         <p>Outcome: <span style="${outcomeStyle}">${outcome}</span></p>
     `;
 
@@ -236,7 +277,7 @@ export class Core100ActorSheet extends ActorSheet {
       user: game.user.id,
       speaker: ChatMessage.getSpeaker({ actor: this.actor }),
       content: messageContent,
-      rolls: rolls,
+      rolls: [roll],
       sound: CONFIG.sounds.dice
     });
   }

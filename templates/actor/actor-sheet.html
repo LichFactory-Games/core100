@@ -50,7 +50,7 @@
             </div>
         </div>
 
-        <div class="tab skills" data-group="primary" data-tab="skills">
+    <div class="tab skills" data-group="primary" data-tab="skills">
     <header class="skills-header flexrow">
         <button type="button" class="skill-create" data-type="skill">
             <i class="fas fa-plus"></i> Add Skill
@@ -58,29 +58,41 @@
     </header>
 
     {{!-- Organize skills by area --}}
-    {{#each skills as |skillGroup area|}}
-    <div class="skill-area">
-        <h3>{{area}}</h3>
-        <div class="skill-list">
-            {{#each skillGroup as |skill|}}
-            <div class="skill item flexrow" data-item-id="{{skill._id}}">
-                <div class="skill-name">{{skill.name}}</div>
-                <div class="skill-attribute">{{skill.system.governing}}</div>
-                <div class="skill-difficulty">{{skill.system.difficulty}}</div>
-                <div class="skill-number">{{skill.system.successNumber}}</div>
-                <div class="skill-controls">
-                    <a class="skill-check" title="Skill Check"><i class="fas fa-dice-d10"></i></a>
-                    <a class="skill-edit" title="Edit"><i class="fas fa-edit"></i></a>
-                    <a class="skill-delete" title="Delete"><i class="fas fa-trash"></i></a>
-                </div>
+{{#each skills as |skillGroup area|}}
+<div class="skill-area">
+    <h3>{{area}}</h3>
+    <div class="skill-list">
+        {{#each skillGroup as |skill|}}
+        <div class="skill item flexrow" data-item-id="{{skill._id}}">
+            <div class="skill-name">{{skill.name}}</div>
+            <div class="skill-attribute">{{skill.system.governing}}</div>
+            <div class="skill-difficulty">{{skill.system.difficulty}}</div>
+            <div class="skill-number">{{skill.system.successNumber}}</div>
+            <div class="skill-controls">
+                <a class="skill-check" title="Skill Check"><i class="fas fa-dice-d10"></i></a>
+                <a class="skill-edit" title="Edit"><i class="fas fa-edit"></i></a>
+                <a class="skill-delete" title="Delete"><i class="fas fa-trash"></i></a>
             </div>
-            {{/each}}
-        </div>
-    </div>
-    {{/each}}
-        </div>
 
-        <!-- <div class="tab skills" data-group="primary" data-tab="skills">
+            {{#if skill.system.specializations.length}}
+            <div class="skill-specializations">
+                {{#each skill.system.specializations as |spec index|}}
+                <div class="specialization" data-item-id="{{skill._id}}" data-spec-index="{{index}}">
+                    <div class="spec-roll">
+                        <a class="spec-check" title="Roll with Advantage"><i class="fas fa-dice-d20"></i></a>
+                    </div>
+                    <div class="spec-name">{{spec}}</div>
+                </div>
+                {{/each}}
+            </div>
+            {{/if}}
+        </div>
+        {{/each}}
+    </div>
+</div>
+{{/each}}
+</div>
+<!-- <div class="tab skills" data-group="primary" data-tab="skills">
              <h2>Skills</h2>
              </div> -->
 
