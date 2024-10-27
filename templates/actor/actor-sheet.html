@@ -18,17 +18,23 @@
     {{!-- Sheet Body --}}
     <section class="sheet-body">
         <div class="tab attributes" data-group="primary" data-tab="attributes">
-            <h2>Attributes</h2>
-            <!-- Basic content for testing -->
-            <p>Attributes will go here</p>
+            <h2>Primary Attributes</h2>
+            {{#if system.primaryAttributes}}
+                {{#each system.primaryAttributes as |attr key|}}
+                <div class="attribute flexrow">
+                    <label>{{attr.label}}</label>
+                    <input type="number" name="system.primaryAttributes.{{key}}.value" value="{{attr.value}}"/>
+                </div>
+                {{/each}}
+            {{/if}}
         </div>
+
         <div class="tab skills" data-group="primary" data-tab="skills">
             <h2>Skills</h2>
-            <p>Skills will go here</p>
         </div>
+
         <div class="tab description" data-group="primary" data-tab="description">
             <h2>Description</h2>
-            <p>Description will go here</p>
         </div>
     </section>
 </form>

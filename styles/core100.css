@@ -1,232 +1,125 @@
-/* Global Styles */
-.core100 {
-  --primary-color: #4A4A4A;
-  --secondary-color: #7C7C7C;
-  --tertiary-color: #B8B8B8;
-  --accent-color: #44679F;
-  --background: #FFFFFF;
-  --border-color: #999;
-  --shadow-color: rgba(0, 0, 0, 0.1);
-}
-
 .core100 .window-content {
-  background: var(--background);
-  padding: 0;
+    padding: 5px;
+    background: #ffffff;
+    font-size: 14px;
 }
 
 /* Sheet Header */
 .core100 .sheet-header {
-  display: flex;
-  gap: 10px;
-  align-items: center;
-  padding: 10px;
-  border-bottom: 2px solid var(--border-color);
+    flex: 0 auto;
+    overflow: hidden;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    margin-bottom: 10px;
 }
 
-.core100 .profile-img {
-  flex: 0 0 100px;
-  height: 100px;
-  border: 2px solid var(--border-color);
-  border-radius: 4px;
+.core100 .sheet-header .profile-img {
+    flex: 0 0 100px;
+    height: 100px;
+    margin-right: 10px;
 }
 
-.core100 .header-fields {
-  flex: 1;
+.core100 .sheet-header .header-fields {
+    flex: 1;
 }
 
-.core100 .charname {
-  height: 50px;
-  margin: 0;
+.core100 .sheet-header h1.charname {
+    height: 50px;
+    padding: 0px;
+    margin: 5px 0;
+    border-bottom: none;
 }
 
-.core100 .charname input {
-  width: 100%;
-  height: 100%;
-  font-size: 1.5em;
+.core100 .sheet-header h1.charname input {
+    width: 100%;
+    height: 100%;
+    margin: 0;
 }
 
 /* Navigation Tabs */
-.core100 .sheet-tabs {
-  display: flex;
-  flex-wrap: wrap;
-  margin: 5px 0;
-  border-bottom: 1px solid var(--border-color);
+.core100 .sheet-navigation {
+    margin-bottom: 10px;
+    border-bottom: 1px solid #AAA;
 }
 
-.core100 .sheet-tabs .item {
-  padding: 5px 20px;
-  margin: 0 5px;
-  border-radius: 4px 4px 0 0;
-  background: rgba(0, 0, 0, 0.05);
-  cursor: pointer;
+.core100 .sheet-navigation .item {
+    padding: 5px;
+    margin: 0 5px;
+    border-radius: 5px 5px 0 0;
+    background: rgba(0, 0, 0, 0.1);
+    border: 1px solid transparent;
+    border-bottom: none;
 }
 
-.core100 .sheet-tabs .item.active {
-  background: var(--accent-color);
-  color: white;
+.core100 .sheet-navigation .item.active {
+    background: #FFF;
+    border: 1px solid #AAA;
+    border-bottom: none;
 }
 
-/* Sheet Body */
-.core100 .sheet-body {
-  height: calc(100% - 140px);
-  padding: 10px;
-}
-
-/* Attributes Tab */
+/* Attributes */
 .core100 .attributes {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 20px;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
 }
 
 .core100 .primary-attributes,
 .core100 .derived-attributes {
-  padding: 10px;
-  border: 1px solid var(--border-color);
-  border-radius: 4px;
+    padding: 10px;
+    border: 1px solid #AAA;
+    border-radius: 5px;
 }
 
 .core100 .attribute {
-  display: grid;
-  grid-template-columns: 1fr auto auto;
-  align-items: center;
-  gap: 10px;
-  margin: 5px 0;
-  padding: 5px;
+    margin: 5px 0;
+    padding: 5px;
+    border-radius: 4px;
 }
 
-.core100 .attribute label {
-  font-weight: bold;
+.core100 .attribute:nth-child(even) {
+    background: rgba(0, 0, 0, 0.05);
 }
 
-.core100 .attribute input {
-  width: 60px;
-  text-align: center;
+.core100 .attribute-label {
+    flex: 1;
+    font-weight: bold;
 }
 
-.core100 .attribute button {
-  width: 30px;
-  height: 30px;
-  padding: 0;
-  border: 1px solid var(--border-color);
-  border-radius: 4px;
-  background: var(--accent-color);
-  color: white;
+.core100 .attribute-value {
+    flex: 0 0 100px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
 }
 
-/* Skills Tab */
-.core100 .skills {
-  height: 100%;
-  overflow-y: auto;
+.core100 .attribute-value input {
+    text-align: center;
+    width: 45px;
 }
 
-.core100 .skill-area {
-  margin-bottom: 20px;
+.core100 .attribute-controls {
+    flex: 0 0 30px;
+    text-align: center;
 }
 
-.core100 .skill-area h3 {
-  color: var(--accent-color);
-  border-bottom: 1px solid var(--border-color);
-  margin-bottom: 5px;
+.core100 .attribute-roll {
+    cursor: pointer;
 }
 
-.core100 .skill {
-  display: grid;
-  grid-template-columns: 2fr 1fr auto;
-  align-items: center;
-  padding: 5px;
-  margin: 2px 0;
-  border-radius: 4px;
+.core100 .attribute-roll:hover {
+    color: #000;
+    text-shadow: 0 0 10px red;
 }
 
-.core100 .skill:nth-child(even) {
-  background: rgba(0, 0, 0, 0.05);
-}
-
-.core100 .skill-controls {
-  display: flex;
-  gap: 5px;
-}
-
-.core100 .skill-controls a {
-  padding: 0 5px;
-  color: var(--secondary-color);
-}
-
-.core100 .skill-controls a:hover {
-  color: var(--accent-color);
-}
-
-/* Item Sheet Specific */
-.core100.item .form-group {
-  display: flex;
-  flex-direction: column;
-  margin: 10px 0;
-}
-
-.core100.item .form-group label {
-  font-weight: bold;
-  margin-bottom: 5px;
-}
-
-.core100.item .form-group select,
-.core100.item .form-group input[type="text"] {
-  height: 30px;
-  border: 1px solid var(--border-color);
-  border-radius: 4px;
-  padding: 0 5px;
-}
-
-.core100.item .form-group .notes {
-  font-size: 0.8em;
-  color: var(--secondary-color);
-  margin-top: 2px;
-}
-
-/* Buttons */
-.core100 button {
-  background: var(--accent-color);
-  color: white;
-  border: none;
-  border-radius: 4px;
-  padding: 5px 10px;
-  cursor: pointer;
-}
-
-.core100 button:hover {
-  background: color-mix(in srgb, var(--accent-color) 90%, black);
-}
-
-/* Editor */
-.core100 .editor {
-  height: 100%;
-  min-height: 200px;
-}
-
-.core100 .editor .tox-tinymce {
-  min-height: 200px;
-}
-
-/* Utility Classes */
+/* Flexbox utilities */
 .flexrow {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  justify-content: flex-start;
-  align-items: center;
-}
-
-.flexcol {
-  display: flex;
-  flex-direction: column;
-  flex-wrap: nowrap;
-}
-
-.flex-center {
-  justify-content: center;
-  align-items: center;
-}
-
-.flex-between {
-  justify-content: space-between;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    align-items: center;
 }
