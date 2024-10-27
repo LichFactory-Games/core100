@@ -1,7 +1,7 @@
 export class Core100ActorSheet extends ActorSheet {
   /** @override */
   static get defaultOptions() {
-    return mergeObject(super.defaultOptions, {
+    return foundry.utils.mergeObject(super.defaultOptions, {
       classes: ["core100", "sheet", "actor"],
       template: "systems/core100/templates/actor/actor-sheet.html",
       width: 600,
@@ -140,7 +140,7 @@ export class Core100ActorSheet extends ActorSheet {
       user: game.user.id,
       speaker: ChatMessage.getSpeaker({ actor: this.actor }),
       content: messageContent,
-      type: CONST.CHAT_MESSAGE_TYPES.ROLL,
+      type: CONST.CHAT_MESSAGE_STYLES.ROLL,
       roll: roll
     });
   }
@@ -170,7 +170,7 @@ export class Core100ActorSheet extends ActorSheet {
       user: game.user.id,
       speaker: ChatMessage.getSpeaker({ actor: this.actor }),
       content: messageContent,
-      type: CONST.CHAT_MESSAGE_TYPES.ROLL,
+      type: CONST.CHAT_MESSAGE_STYLES.ROLL,
       roll: roll
     });
   }
@@ -236,7 +236,7 @@ export class Core100ActorSheet extends ActorSheet {
       user: game.user.id,
       speaker: ChatMessage.getSpeaker({ actor: this.actor }),
       content: messageContent,
-      type: CONST.CHAT_MESSAGE_TYPES.ROLL,
+      type: CONST.CHAT_MESSAGE_STYLES.ROLL,
       roll: roll
     });
   }
