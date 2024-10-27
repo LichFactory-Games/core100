@@ -157,7 +157,6 @@ export class Core100ActorSheet extends ActorSheet {
    * @param {Event} event   The originating click event
    * @private
    */
-
   async _onAttributeCheck(event) {
     event.preventDefault();
     const element = event.currentTarget;
@@ -166,7 +165,8 @@ export class Core100ActorSheet extends ActorSheet {
     const attrValue = this.actor.system.primaryAttributes[attribute].value;
     const attrLabel = this.actor.system.primaryAttributes[attribute].label;
 
-    const roll = await new Roll("1d100").evaluate({async: true});
+    const roll = new Roll("1d100");
+    await roll.evaluate();
     const rollResult = roll.total;
 
     const { outcome, outcomeStyle } = this.evaluateRollOutcome(rollResult, attrValue);
@@ -178,78 +178,13 @@ export class Core100ActorSheet extends ActorSheet {
       <p>Outcome: <span style="${outcomeStyle}">${outcome}</span></p>
     `;
 
-    ChatMessage.create({
+    await ChatMessage.create({
       user: game.user.id,
       speaker: ChatMessage.getSpeaker({ actor: this.actor }),
       content: messageContent,
-      type: CONST.CHAT_MESSAGE_TYPES.ROLL,
-      roll: roll
+      rolls: [roll],
+      sound: CONFIG.sounds.dice
     });
-  }
-
-
-  /**
-   * Handle attribute generation (4d10+30)
-   * @param {Event} event   The originating click event
-   * @private
-   */
-  async _onAttributeGenerate(event) {
-    event.preventDefault();
-    const element = event.currentTarget;
-    const attribute = element.dataset.attribute;
-
-    const roll = await new Roll("4d10+30").evaluate({async: true});
-
-    await this.actor.update({
-      [`system.primaryAttributes.${attribute}.value`]: roll.total
-    });
-
-    const messageContent = `
-      <h2>${this.actor.system.primaryAttributes[attribute].label} Generation</h2>
-      <p>Roll: ${roll.total}</p>
-    `;
-
-    ChatMessage.create({
-      user: game.user.id,
-      speaker: ChatMessage.getSpeaker({ actor: this.actor }),
-      content: messageContent,
-      type: CONST.CHAT_MESSAGE_STYLES.ROLL,
-      roll: roll
-    });
-  }
-
-  /**
-   * Handle creating a new Owned Item for the actor
-   * @param {Event} event   The originating click event
-   * @private
-   */
-  async _onItemCreate(event) {
-    event.preventDefault();
-
-    console.log("Creating new skill");
-    const itemData = {
-      name: "New Skill",
-      type: "skill",
-      system: {
-        area: "",
-        governing: "",
-        difficulty: "Average",
-        successNumber: 0,
-        specializations: [],
-        hasAdvantage: false,
-        description: ""
-      }
-    };
-
-    console.log("Item creation data:", itemData);
-
-    try {
-      const created = await Item.create(itemData, {parent: this.actor});
-      console.log("Skill created:", created);
-      created.sheet.render(true);
-    } catch (err) {
-      console.error("Error creating skill:", err);
-    }
   }
 
   /**
@@ -270,31 +205,105 @@ export class Core100ActorSheet extends ActorSheet {
 
     // Roll with or without Advantage based on specialization
     let rollResult;
+    const rolls = [];
+
     if (hasSpecialization) {
-      const roll1 = await new Roll("1d100").evaluate({async: true});
-      const roll2 = await new Roll("1d100").evaluate({async: true});
+      const roll1 = new Roll("1d100");
+      const roll2 = new Roll("1d100");
+      await roll1.evaluate();
+      await roll2.evaluate();
+      rolls.push(roll1, roll2);
       rollResult = Math.min(roll1.total, roll2.total); // Advantage: take the lower roll
     } else {
-      const roll = await new Roll("1d100").evaluate({async: true});
+      const roll = new Roll("1d100");
+      await roll.evaluate();
+      rolls.push(roll);
       rollResult = roll.total;
     }
 
     // Get outcome and style based on the roll result
     const { outcome, outcomeStyle } = this.evaluateRollOutcome(rollResult, successNumber);
 
-    const messageContent = `
+    let messageContent = `
         <h2>${skill.name} Check</h2>
         <p>Target: ${successNumber}</p>
         <p>Roll: ${rollResult}</p>
+        ${hasSpecialization ? `<p><em>Rolling with Advantage due to Specialization</em></p>` : ''}
         <p>Outcome: <span style="${outcomeStyle}">${outcome}</span></p>
     `;
 
-    ChatMessage.create({
+    await ChatMessage.create({
       user: game.user.id,
       speaker: ChatMessage.getSpeaker({ actor: this.actor }),
       content: messageContent,
-      type: CONST.CHAT_MESSAGE_TYPES.ROLL,
-      roll: rollResult
+      rolls: rolls,
+      sound: CONFIG.sounds.dice
     });
+  }
+
+
+  /**
+   * Handle attribute generation (4d10+30)
+   * @param {Event} event   The originating click event
+   * @private
+   */
+  // async _onAttributeGenerate(event) {
+  //   event.preventDefault();
+  //   const element = event.currentTarget;
+  //   const attribute = element.dataset.attribute;
+
+  //   const roll = await new Roll("4d10+30").evaluate({async: true});
+
+  //   await this.actor.update({
+  //     [`system.primaryAttributes.${attribute}.value`]: roll.total
+  //   });
+
+  //   const messageContent = `
+  //     <h2>${this.actor.system.primaryAttributes[attribute].label} Generation</h2>
+  //     <p>Roll: ${roll.total}</p>
+  //   `;
+
+  //   ChatMessage.create({
+  //     user: game.user.id,
+  //     speaker: ChatMessage.getSpeaker({ actor: this.actor }),
+  //     content: messageContent,
+  //     type: CONST.CHAT_MESSAGE_STYLES.ROLL,
+  //     roll: roll
+  //   });
+  // }
+
+  /**
+   * Handle creating a new Owned Item for the actor
+   * @param {Event} event   The originating click event
+   * @private
+   */
+  async _onItemCreate(event) {
+    event.preventDefault();
+
+    console.log("Creating new skill");
+    const itemData = {
+      type: "skill",
+      name: "Skill", // Default name if input is empty
+      system: {
+        name: "",
+        area: "Default",
+        governing: "",
+        difficulty: "Average",
+        successNumber: 0,
+        specializations: [],
+        hasAdvantage: false,
+        description: ""
+      }
+    };
+
+    console.log("Item creation data:", itemData);
+
+    try {
+      const created = await Item.create(itemData, {parent: this.actor});
+      console.log("Skill created:", created);
+      created.sheet.render(true);
+    } catch (err) {
+      console.error("Error creating skill:", err);
+    }
   }
 }

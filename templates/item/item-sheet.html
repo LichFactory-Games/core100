@@ -1,59 +1,60 @@
-<form>
-  <!-- Skill Name -->
-  <div class="form-group">
-    <label>Skill Name</label>
-    <input type="text" name="name" value="{{name}}" />
-  </div>
+<form class="{{cssClass}}" autocomplete="off">
+    <header class="sheet-header">
+        <img class="profile-img" src="{{item.img}}" data-edit="img" title="{{item.name}}"/>
+        <div class="header-fields">
+            <h1 class="charname">
+                <input name="name" type="text" value="{{item.name}}" placeholder="Name"/>
+            </h1>
+        </div>
+    </header>
 
-  <!-- Area -->
-  <div class="form-group">
-    <label>Area</label>
-    <input type="text" name="system.area" value="{{system.area}}" />
-  </div>
-
-  <!-- Governing Attribute -->
-  <div class="form-group">
-    <label>Governing Attribute</label>
-    <select name="system.governing">
-      <option value="vgr" {{#if (eq system.governing "vgr")}}selected{{/if}}>Vigor</option>
-      <option value="grc" {{#if (eq system.governing "grc")}}selected{{/if}}>Grace</option>
-      <option value="ins" {{#if (eq system.governing "ins")}}selected{{/if}}>Insight</option>
-      <option value="prs" {{#if (eq system.governing "prs")}}selected{{/if}}>Presence</option>
-    </select>
-  </div>
-
-  <!-- Difficulty -->
-  <div class="form-group">
-    <label>Difficulty</label>
-    <select name="system.difficulty">
-      <option value="Average" {{#if (eq system.difficulty "Average")}}selected{{/if}}>Average</option>
-      <option value="Demanding" {{#if (eq system.difficulty "Demanding")}}selected{{/if}}>Demanding</option>
-    </select>
-  </div>
-
-  <!-- Success Number (read-only) -->
-  <div class="form-group">
-    <label>Success Number</label>
-    <input type="number" name="system.successNumber" value="{{system.successNumber}}" readonly />
-  </div>
-
-  <!-- Description -->
-  <div class="form-group">
-    <label>Description</label>
-    <textarea name="system.description">{{system.description}}</textarea>
-  </div>
-
-  <!-- Specializations -->
-  <div class="form-group">
-    <label>Specializations</label>
-    <div class="specialization-list">
-      {{#each system.specializations as |specialization|}}
-      <div class="flexrow specialization-item">
-        <input type="text" name="system.specializations.{{@index}}" value="{{specialization}}" />
-        <button type="button" class="specialization-remove"><i class="fas fa-trash"></i></button>
-      </div>
-      {{/each}}
+    {{#if (eq item.type "skill")}}
+    <div class="form-group">
+        <label>Area</label>
+        <select name="system.area">
+            {{selectOptions SKILL_AREAS selected=system.area}}
+        </select>
     </div>
-    <button type="button" class="specialization-add"><i class="fas fa-plus"></i> Add Specialization</button>
-  </div>
+
+    <div class="form-group">
+        <label>Governing Attribute</label>
+        <select name="system.governing">
+            {{selectOptions ATTRIBUTES selected=system.governing}}
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label>Difficulty</label>
+        <select name="system.difficulty">
+            {{selectOptions DIFFICULTIES selected=system.difficulty}}
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label>Success Number</label>
+        <input type="text" name="system.successNumber" value="{{system.successNumber}}" disabled/>
+    </div>
+
+    <div class="form-group">
+        <label>Description</label>
+        {{editor system.description target="system.description" button=true owner=owner editable=editable}}
+    </div>
+
+    <div class="form-group specializations">
+        <label>Specializations</label>
+        <div class="specialization-list">
+            {{#each system.specializations as |spec index|}}
+            <div class="specialization-item flexrow" data-index="{{index}}">
+                <input type="text" name="system.specializations.{{index}}" value="{{spec}}"/>
+                <button type="button" class="specialization-remove">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            {{/each}}
+        </div>
+        <button type="button" class="specialization-add">
+            <i class="fas fa-plus"></i> Add Specialization
+        </button>
+    </div>
+    {{/if}}
 </form>

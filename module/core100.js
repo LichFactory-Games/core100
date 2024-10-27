@@ -1,6 +1,7 @@
 console.log("core100.js is loading");
 
 // Import your modules
+import { CORE100_SCHEMA, SKILL_AREAS, DIFFICULTIES, ATTRIBUTES } from "./schema.js";
 import { preloadHandlebarsTemplates } from "./helpers/templates.js";
 import { Core100Actor } from "./actor/actor.js";
 import { Core100ActorSheet } from "./actor/actor-sheet.js";
@@ -50,26 +51,27 @@ Hooks.once("init", async function() {
   console.log("Defining document classes");
   CONFIG.Actor.documentClass = Core100Actor;
   CONFIG.Item.documentClass = Core100Item;
+  CONFIG.CORE100 = {
+    skillAreas: SKILL_AREAS,
+    difficulties: DIFFICULTIES,
+    attributes: ATTRIBUTES
+  };
 
-  // Register new sheets
-  console.log("Registering custom sheets");
-  try {
-    Actors.registerSheet("core100", Core100ActorSheet, { makeDefault: true });
-    console.log("Actor sheet registered");
+  // Register custom system data models
+  CONFIG.Actor.DataModels = CORE100_SCHEMA.Actor || {};
+  CONFIG.Item.DataModels = CORE100_SCHEMA.Item || {};
 
-    Items.registerSheet("core100", Core100ItemSheet, { makeDefault: true });
-    console.log("Item sheet registered");
-  } catch (error) {
-    console.error("Error registering sheets:", error);
-  }
+  // Register sheet application classes
+  Actors.unregisterSheet("core", ActorSheet);
+  Actors.registerSheet("core100", Core100ActorSheet, { makeDefault: true });
+  Items.unregisterSheet("core", ItemSheet);
+  Items.registerSheet("core100", Core100ItemSheet, { makeDefault: true });
 
-  // Preload templates
-  try {
-    await preloadHandlebarsTemplates();
-    console.log("Templates preloaded");
-  } catch (error) {
-    console.error("Template preload error:", error);
-  }
+  // Register system settings
+  registerSettings();
+
+  // Preload Handlebars templates
+  await preloadHandlebarsTemplates();
 });
 
 /* -------------------------------------------- */
