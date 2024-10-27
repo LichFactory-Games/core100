@@ -124,23 +124,52 @@ export class Core100ActorSheet extends ActorSheet {
     const attrValue = this.actor.system.primaryAttributes[attribute].value;
     const attrLabel = this.actor.system.primaryAttributes[attribute].label;
 
+    // Roll d100
     const roll = await new Roll("1d100").evaluate({async: true});
-    const success = roll.total <= attrValue;
+    const rollResult = roll.total;
+    const isDoubles = rollResult % 11 === 0;
 
+    // Calculate degrees of success and failure
+    let outcome = "";
+    let outcomeStyle = "color: black";  // Default style, will update per outcome
+
+    if (rollResult <= attrValue) {  // Successful roll
+      if (isDoubles) {
+        outcome = "Ace";
+        outcomeStyle = "color: goldenrod";
+      } else if (rollResult <= Math.floor(attrValue / 2)) {
+        outcome = "Success";
+        outcomeStyle = "color: green";
+      } else {
+        outcome = "Partial Success";
+        outcomeStyle = "color: darkblue";
+      }
+    } else {  // Failed roll
+      if (isDoubles) {
+        outcome = "Fumble";
+        outcomeStyle = "color: red";
+      } else if (rollResult <= Math.floor((100 - attrValue) / 2) + attrValue) {
+        outcome = "Partial Failure";
+        outcomeStyle = "color: brown";
+      } else {
+        outcome = "Failure";
+        outcomeStyle = "color: crimson";
+      }
+    }
+
+    // Construct the chat message content with the outcome and style
     const messageContent = `
-      <h2>${attrLabel} Check</h2>
-      <p>Target: ${attrValue}</p>
-      <p>Roll: ${roll.total}</p>
-      <p style="color: ${success ? 'green' : 'red'}">
-        ${success ? 'Success!' : 'Failure'}
-      </p>
-    `;
+  <h2>${attrLabel} Check</h2>
+  <p>Target: ${attrValue}</p>
+  <p>Roll: ${rollResult}</p>
+  <p>Outcome: <span style="${outcomeStyle}">${outcome}</span></p>
+`;
 
     ChatMessage.create({
       user: game.user.id,
       speaker: ChatMessage.getSpeaker({ actor: this.actor }),
       content: messageContent,
-      type: CONST.CHAT_MESSAGE_STYLES.ROLL,
+      type: CONST.CHAT_MESSAGE_TYPES.ROLL,
       roll: roll
     });
   }
