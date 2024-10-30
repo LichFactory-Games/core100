@@ -60,13 +60,13 @@
     {{!-- Organize skills by area --}}
 {{#each skills as |skillGroup area|}}
 <div class="skill-area">
-    <h3>{{area}}</h3>
+    <h3>{{capitalize area}}</h3>
     <div class="skill-list">
         {{#each skillGroup as |skill|}}
         <div class="skill item flexrow" data-item-id="{{skill._id}}">
             <div class="skill-name">{{skill.name}}</div>
-            <div class="skill-attribute">{{skill.system.governing}}</div>
-            <div class="skill-difficulty">{{skill.system.difficulty}}</div>
+            <div class="skill-attribute">{{upperCase skill.system.governing}}</div>
+            <div class="skill-difficulty">{{capitalize skill.system.difficulty}}</div>
             <div class="skill-number">{{skill.system.successNumber}}</div>
             <div class="skill-controls">
                 <a class="skill-check" title="Skill Check"><i class="fas fa-dice-d10"></i></a>
@@ -91,10 +91,6 @@
 </div>
 {{/each}}
 </div>
-<!-- <div class="tab skills" data-group="primary" data-tab="skills">
-             <h2>Skills</h2>
-             </div> -->
-
         <div class="tab description" data-group="primary" data-tab="description">
             <h2>Description</h2>
         </div>

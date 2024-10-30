@@ -42,6 +42,17 @@ function registerSettings() {
 Hooks.once("init", async function() {
   console.log("core100 | Initializing Core 100 System");
 
+  // Register Handlebars helpers
+  Handlebars.registerHelper('capitalize', function(str) {
+    return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+  });
+
+  Handlebars.registerHelper('upperCase', function(str) {
+    return str.toUpperCase();
+  });
+  console.log("Core 100 | Register Handlebars");
+
+
   // First unregister default sheets
   console.log("Unregistering default sheets");
   Actors.unregisterSheet("core", ActorSheet);
@@ -49,6 +60,9 @@ Hooks.once("init", async function() {
 
   // Define custom Document classes
   console.log("Defining document classes");
+  // DEBUG
+  CONFIG.debug.hooks = true;   // Shows hook firing events
+  CONFIG.debug.roles = true;   // Shows permission checks
   CONFIG.Actor.documentClass = Core100Actor;
   CONFIG.Item.documentClass = Core100Item;
   CONFIG.CORE100 = {
@@ -75,10 +89,43 @@ Hooks.once("init", async function() {
 });
 
 /* -------------------------------------------- */
-/*  Ready Hook                                  */
+/*  Ready Hook (Debug Functions)                */
 /* -------------------------------------------- */
-Hooks.once("ready", async function() {
-  console.log("core100 | System Ready");
+
+Hooks.once('ready', () => {
+  game.core100 = {
+    debug: {
+      refreshSheets: async () => {
+        for (const window of Object.values(ui.windows)) {
+          if (window instanceof ActorSheet) {
+            // Force a re-render of the sheet
+            window._state = Application.RENDER_STATES.NONE;
+            window.render(true);
+          }
+        }
+      },
+
+      forceUpdateSheets: async () => {
+        for (const window of Object.values(ui.windows)) {
+          if (window instanceof ActorSheet) {
+            await window.actor.render(false);  // Update the actor
+            window._state = Application.RENDER_STATES.NONE;  // Reset render state
+            await window.render(true);  // Force full re-render
+          }
+        }
+      }
+    }
+  };
+
+  // Add keyboard shortcut for quick refresh (Ctrl + R)
+  $(document).on('keydown', async (event) => {
+    if (event.ctrlKey && event.key === 'r') {
+      event.preventDefault();
+      await game.core100.debug.forceUpdateSheets();
+    }
+  });
+
+  console.log("core100 | Debug helpers initialized");
 });
 
 /* -------------------------------------------- */
