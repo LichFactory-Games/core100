@@ -50,6 +50,9 @@
             "label": "Poise",
             "description": "Mental stability ((INS + GRT) / 5)"
           }
+        },
+        "description": {
+          "value": ""
         }
       }
     },

@@ -10,9 +10,10 @@
   },
   "authors": [
     {
-        "name": "Colin McLear",
-        "email": "",
-        "url": ""
+      "name": "Colin McLear",
+      "email": "",
+      "url": "",
+      "discord": ""
     }
   ],
   "esmodules": ["module/core100.js"],
@@ -24,12 +25,20 @@
       "path": "languages/en.json"
     }
   ],
+  "socket": false,
   "gridDistance": 1,
   "gridUnits": "m",
-    "primaryTokenAttribute": "hlt",
-    "secondaryTokenAttribute": "poi",
-    "url": "",
-    "manifest": "",
-    "download": "",
-    "license": "LICENSE.txt"
+  "primaryTokenAttribute": "hlt",
+  "secondaryTokenAttribute": "poi",
+  "url": "",
+  "manifest": "",
+  "download": "",
+  "license": "LICENSE.txt",
+  "renderPriority": 0,
+  "relationships": {
+    "requires": []
+  },
+  "packs": [],
+  "system": [],
+  "background": ""
 }
