@@ -15,17 +15,30 @@ export class Core100ActorSheet extends ActorSheet {
   }
 
   /** @override */
-  getData() {
-    const context = super.getData();
+  async getData() {
+    const context = await super.getData();
     const actorData = this.actor.toObject(false);
+
+    // Add the actor's data to context.data for easier access, as well as flags
     context.system = actorData.system;
-    context.rollData = context.actor.getRollData();
+    context.flags = actorData.flags;
     context.skills = this._organizeSkills();
 
-    if (actorData.type == 'character') {
-      this._prepareItems(context);
-      this._prepareCharacterData(context);
-    }
+    // Enrich the text editors
+    context.enrichedBiography = await TextEditor.enrichHTML(this.actor.system.biography, {
+      secrets: this.document.isOwner,
+      async: true,
+      rollData: this.actor.getRollData(),
+      relativeTo: this.actor
+    });
+
+    context.enrichedNotes = await TextEditor.enrichHTML(this.actor.system.notes, {
+      secrets: this.document.isOwner,
+      async: true,
+      rollData: this.actor.getRollData(),
+      relativeTo: this.actor
+    });
+
     return context;
   }
 
@@ -91,6 +104,42 @@ export class Core100ActorSheet extends ActorSheet {
 
     // Specialization checks
     html.find('.spec-check').click(this._onSpecializationCheck.bind(this));
+
+    // Toggle editor visibility
+    html.find('.toggle-edit-button').click(ev => {
+      const button = ev.currentTarget;
+      const editorType = button.dataset.editor;
+      const container = button.closest('.editor-container');
+      const readView = container.querySelector('.read-view');
+      const editView = container.querySelector('.edit-view');
+
+      if (readView.style.display !== 'none') {
+        // Switch to edit mode
+        readView.style.display = 'none';
+        editView.style.display = 'block';
+        button.innerHTML = '<i class="fas fa-eye"></i> Preview';
+
+        // Focus the editor
+        setTimeout(() => {
+          const editor = editView.querySelector('.editor-content');
+          if (editor) editor.focus();
+        }, 100);
+      } else {
+        // Switch to preview mode
+        readView.style.display = 'block';
+        editView.style.display = 'none';
+        button.innerHTML = '<i class="fas fa-edit"></i> Edit';
+        this.render(false);
+      }
+    });
+
+    // Set up auto-save for editors
+    html.find('.edit-view .editor-content').on('input', debounce(async (ev) => {
+      const target = ev.currentTarget.dataset.target;
+      const content = ev.currentTarget.innerHTML;
+      await this.actor.update({ [target]: content });
+    }, 500)); // Debounce for 500ms to prevent too frequent saves
+
 
     // Everything below here is only needed if the sheet is editable
     if (!this.isEditable) return;
@@ -347,4 +396,17 @@ export class Core100ActorSheet extends ActorSheet {
       console.error("Error creating skill:", err);
     }
   }
+}
+
+// Utility debounce function
+function debounce(func, wait) {
+  let timeout;
+  return function executedFunction(...args) {
+    const later = () => {
+      clearTimeout(timeout);
+      func(...args);
+    };
+    clearTimeout(timeout);
+    timeout = setTimeout(later, wait);
+  };
 }
