@@ -15,7 +15,7 @@
    BASE STYLES
    ========================================================================== */
 .core100 .window-content {
-    padding: 5px;
+    padding: 15px;
     background: var(--color-bg);
     background-blend-mode: overlay;
     font-size: 14px;
@@ -264,19 +264,16 @@
   min-height: 300px; /* Set minimum height */
 }
 
-
-.core100 .editor-edit {
-    margin-left: auto;  /* This pushes the button to the right */
-}
-
- .editor-content {
-    min-height: 300px;
-    height: 100%;
-    padding: 8px;
-    background: rgba(0, 0, 0, 0.05);
-    border: 1px solid #999;
-    border-radius: 3px;
-}
+ .core100 .editor-content {
+     min-height: 300px;
+     height: 100%;
+     padding: 8px;
+     background: rgba(0, 0, 0, 0.05);
+     border: 1px solid #999;
+     border-radius: 3px;
+     width: 100%;
+     margin: 0;
+ }
 
 /* Toggle button */
 .core100 .toggle-edit-button {
@@ -294,6 +291,36 @@
 /* Styling for Editor & ProseMirror menu */
 .core100 .editor-menu {
     margin-top: 4px;
+}
+
+
+/* Read and Edit views */
+.core100 .read-view, .edit-view {
+    flex: 1;
+    min-height: 0; /* Important for flex containers */
+    position: relative;
+    height: 100%;
+    font-size: 12pt;
+}
+
+.core100 .edit-view {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Read view */
+.core100 .read-view {
+  padding: 8px;
+  padding-top: 6px;
+  border-top: none;
+  border-radius: 0 0 3px 3px;
+  overflow-y: auto;
+}
+
+.core100 .read-view:empty::before {
+  content: "Click Edit to add content";
+  color: #666;
+  font-style: italic;
 }
 
 .core100 .prosemirror menu {
@@ -333,4 +360,10 @@
   height: 24px;
 }
 
-
+/* ProseMirror specific */
+.core100 .editor-container .prosemirror {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}

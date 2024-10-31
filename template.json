@@ -56,7 +56,8 @@
     "character": {
       "templates": ["base"],
       "biography": "",
-      "notes": ""
+      "notes": "",
+      "equipment": ""
     }
   },
   "Item": {

@@ -9,7 +9,7 @@
   </header>
 
   <nav class="sheet-navigation tabs" data-group="primary">
-    <a class="item" data-tab="attributes">Attributes</a>
+    <a class="item" data-tab="attributes">Main</a>
     <a class="item" data-tab="skills">Skills</a>
     <a class="item" data-tab="notes">Notes</a>
     <a class="item" data-tab="biography">Bio</a>
@@ -50,6 +50,26 @@
           {{/each}}
         </div>
       </div>
+
+            <div class="editor-container">
+              <h2>Equipment & Resources</h2>
+        <div class="editor-header">
+          <button class="toggle-edit-button" data-editor="equipment">
+            <i class="fas fa-edit"></i> Edit
+          </button>
+        </div>
+        {{!-- Read-only view --}}
+        <div class="read-view notes-display">
+          {{{enrichedEquip}}}
+        </div>
+        {{!-- Edit view (initially hidden) --}}
+        <div class="edit-view" style="display: none;">
+          {{editor enrichedEquip target="system.equipment" engine="prosemirror"
+          editable=editable collaborate=false submitOnChange=true}}
+        </div>
+      </div>
+    </div>
+
     </div>
 
     <div class="tab skills" data-group="primary" data-tab="skills">

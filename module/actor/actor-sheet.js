@@ -44,6 +44,13 @@ export class Core100ActorSheet extends ActorSheet {
       relativeTo: this.actor
     });
 
+    context.enrichedEquip = await TextEditor.enrichHTML(this.actor.system.equipment, {
+      secrets: this.actor.isOwner,
+      async: true,
+      rollData: this.actor.getRollData(),
+      relativeTo: this.actor
+    });
+
     return context;
   }
 
