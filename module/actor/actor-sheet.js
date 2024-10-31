@@ -196,36 +196,6 @@ export class Core100ActorSheet extends ActorSheet {
    * @param {number} target - The target value to beat (attribute or skill's success number).
    * @returns {Object} An object containing the outcome and style.
    */
-  evaluateRollOutcome(rollResult, target) {
-    const isDoubles = rollResult % 11 === 0;
-    let outcome = "";
-    let outcomeStyle = "color: black"; // Default style
-
-    if (rollResult <= target) { // Success cases
-      if (isDoubles) {
-        outcome = "Ace";
-        outcomeStyle = "color: goldenrod";
-      } else if (rollResult <= Math.floor(target / 2)) {
-        outcome = "Success";
-        outcomeStyle = "color: green";
-      } else {
-        outcome = "Partial Success";
-        outcomeStyle = "color: darkblue";
-      }
-    } else { // Failure cases
-      if (isDoubles) {
-        outcome = "Fumble";
-        outcomeStyle = "color: red";
-      } else if (rollResult <= Math.floor((100 - target) / 2) + target) {
-        outcome = "Partial Failure";
-        outcomeStyle = "color: brown";
-      } else {
-        outcome = "Failure";
-        outcomeStyle = "color: crimson";
-      }
-    }
-    return { outcome, outcomeStyle };
-  }
 
 
   /**
@@ -245,7 +215,7 @@ export class Core100ActorSheet extends ActorSheet {
     await roll.evaluate();
     const rollResult = roll.total;
 
-    const { outcome, outcomeStyle } = this.evaluateRollOutcome(rollResult, attrValue);
+    const { outcome, outcomeStyle } = game.core100.evaluateRollOutcome(rollResult, attrValue);
 
     const messageContent = `
       <h2>${attrLabel} Check</h2>
@@ -296,7 +266,7 @@ export class Core100ActorSheet extends ActorSheet {
     const rollResult = Math.min(roll1.total, roll2.total); // Take the better roll
 
     // Get outcome using your existing method
-    const { outcome, outcomeStyle } = this.evaluateRollOutcome(rollResult, successNumber);
+    const { outcome, outcomeStyle } = game.core100.evaluateRollOutcome(rollResult, successNumber);
 
     const messageContent = `
         <h2>${skill.name}: ${specializationName}</h2>
@@ -337,7 +307,7 @@ export class Core100ActorSheet extends ActorSheet {
     const rollResult = roll.total;
 
     // Get outcome and style based on the roll result
-    const { outcome, outcomeStyle } = this.evaluateRollOutcome(rollResult, successNumber);
+    const { outcome, outcomeStyle } = game.core100.evaluateRollOutcome(rollResult, successNumber);
 
     const messageContent = `
         <h2>${skill.name} Check</h2>
