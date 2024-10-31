@@ -11,7 +11,8 @@
   <nav class="sheet-navigation tabs" data-group="primary">
     <a class="item" data-tab="attributes">Attributes</a>
     <a class="item" data-tab="skills">Skills</a>
-    <a class="item" data-tab="description">Description</a>
+    <a class="item" data-tab="notes">Notes</a>
+    <a class="item" data-tab="biography">Bio</a>
   </nav>
 
   <section class="sheet-body">
@@ -93,47 +94,45 @@
       {{/each}}
     </div>
 
-    {{!-- Description Tab --}}
-<div class="tab description" data-group="primary" data-tab="description">
-
-    <div class="editor-container">
-    <div class="editor-header">
-      <h2>Notes</h2>
-      <button class="toggle-edit-button" data-editor="notes">
-        <i class="fas fa-edit"></i> Edit
-      </button>
-    </div>
-    {{!-- Read-only view --}}
-    <div class="read-view notes-display">
-      {{{enrichedNotes}}}
-    </div>
-    {{!-- Edit view (initially hidden) --}}
-    <div class="edit-view" style="display: none;">
-      {{editor enrichedNotes target="system.notes" engine="prosemirror"
-        editable=editable collaborate=false submitOnChange=true}}
-    </div>
+    {{!-- Notes Tab --}}
+    <div class="tab notes" data-group="primary" data-tab="notes">
+      <div class="editor-container">
+        <div class="editor-header">
+          <button class="toggle-edit-button" data-editor="notes">
+            <i class="fas fa-edit"></i> Edit
+          </button>
+        </div>
+        {{!-- Read-only view --}}
+        <div class="read-view notes-display">
+          {{{enrichedNotes}}}
+        </div>
+        {{!-- Edit view (initially hidden) --}}
+        <div class="edit-view" style="display: none;">
+          {{editor enrichedNotes target="system.notes" engine="prosemirror"
+          editable=editable collaborate=false submitOnChange=true}}
+        </div>
       </div>
-
-
-  <div class="editor-container">
-    <div class="editor-header">
-      <h2>Biography</h2>
-      <button class="toggle-edit-button" data-editor="biography">
-        <i class="fas fa-edit"></i> Edit
-      </button>
     </div>
-    {{!-- Read-only view --}}
-    <div class="read-view biography-display">
-      {{{enrichedBiography}}}
-    </div>
-    {{!-- Edit view (initially hidden) --}}
-    <div class="edit-view" style="display: none;">
-      {{editor enrichedBiography target="system.biography" engine="prosemirror"
-        editable=editable collaborate=false submitOnChange=true}}
-    </div>
-  </div>
 
-</div>
+    {{!-- Biography Tab --}}
+    <div class="tab biography" data-group="primary" data-tab="biography">
+      <div class="editor-container">
+        <div class="editor-header">
+          <button class="toggle-edit-button" data-editor="biography">
+            <i class="fas fa-edit"></i> Edit
+          </button>
+        </div>
+        {{!-- Read-only view --}}
+        <div class="read-view biography-display">
+          {{{enrichedBiography}}}
+        </div>
+        {{!-- Edit view (initially hidden) --}}
+        <div class="edit-view" style="display: none;">
+          {{editor enrichedBiography target="system.biography" engine="prosemirror"
+          editable=editable collaborate=false submitOnChange=true}}
+        </div>
+      </div>
+    </div>
 
-</section>
+  </section>
 </form>

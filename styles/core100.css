@@ -4,11 +4,11 @@
 :root {
   --color-bg: #ffffff;
   --color-primary: #6448b0;
-  --color-border: #ff69b4;
+  --color-border: #228b22;
   --color-text: #000000;
   --color-hover: rgba(100, 72, 176, 0.1);
   --border-radius: 4px;
-  --font-techno: "Orbitron", sans-serif;
+  --font-techno: "Roboto Flex", sans-serif;
 }
 
 /* ==========================================================================
@@ -152,7 +152,7 @@
 .core100 .skill.item {
     background: rgba(0, 0, 0, 0.05);  /* This gives a very subtle grey */
     /* or */
-    /* background: #F5F5F5; */  /* If you prefer a specific hex value */
+    /* background: #F5F5F5;  If you prefer a specific hex value */
     border-radius: var(--border-radius);
     padding: 10px;
     margin: 4px 0;
@@ -178,7 +178,7 @@
     margin: 2px 1em;
     padding: 2px 5px;
     background: rgba(100, 72, 176, 0.05);
-    border: 1px solid rgba(255, 105, 180, 0.3);
+    border: 1px solid #228b22;
 }
 
 .core100 .spec-check {
@@ -215,6 +215,7 @@
    BUTTONS AND CONTROLS
    ========================================================================== */
 .core100 button {
+    display: block;
     background: var(--color-primary);
     color: var(--color-bg);
     border: none;
@@ -222,9 +223,9 @@
     padding: 5px 5px;
     cursor: pointer;
     transition: all 0.2s ease;
-    width: 50%;
-    margin-left: 10px;
+    width: 90%;
     height: 80%;
+    line-height: 16px;
 }
 
 .core100 button:hover {
@@ -248,32 +249,27 @@
 
 .core100 input:disabled {
     background: rgba(100, 72, 176, 0.05);
-    border-color: rgba(255, 105, 180, 0.3);
+    border-color: #228b22;
 }
 
 
-/* Description tab containers */
-.description {
-  height: 100%;
-  padding: 0.5em;
+/* ==========================================================================
+   EDITOR
+   ========================================================================== */
+/* Editor css */
+.core100 .editor-container {
   display: flex;
   flex-direction: column;
-  gap: 1em;
+  flex: 1;
+  min-height: 300px; /* Set minimum height */
 }
 
-.tab.description .notes {
-    font-size: 0.9em;
-    color: #666;
-    margin-bottom: 8px;
-    font-style: italic;
+
+.core100 .editor-edit {
+    margin-left: auto;  /* This pushes the button to the right */
 }
 
-.tab.description .notes i {
-    margin-right: 4px;
-    color: #7a7971;
-}
-
-.tab.description .editor-content {
+ .editor-content {
     min-height: 300px;
     height: 100%;
     padding: 8px;
@@ -282,119 +278,59 @@
     border-radius: 3px;
 }
 
-/* Editor css */
-.editor-container {
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  min-height: 300px; /* Set minimum height */
-}
-
-/* Header styling */
-.editor-header {
-  background: rgba(0, 0, 0, 0.1);
-  border: 2px solid #782e22;
-  border-radius: 3px 3px 0 0;
-  margin: 0;
-  padding: 4px 8px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-/* Read and Edit views */
-.read-view, .edit-view {
-  flex: 1;
-  min-height: 0; /* Important for flex containers */
-  position: relative;
-  height: 100%;
-}
-
-.edit-view {
-  display: flex;
-  flex-direction: column;
-}
-
-/* ProseMirror specific */
-.editor-container .prosemirror {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-}
-
-.prosemirror menu {
-  background: rgba(0, 0, 0, 0.15);
-  border: 1px solid #999;
-  border-radius: 3px;
-  padding: 4px;
-  margin: 0;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4px;
-  position: sticky;
-  top: 0;
-  z-index: 1;
-}
-
-/* The actual editable content area */
-.prosemirror .editor-content {
-  flex: 1;
-  overflow-y: auto;
-  padding: 8px;
-  background: white;
-  min-height: 200px;
-}
-
-/* Editor control buttons */
-.prosemirror menu button {
-  background: rgba(255, 255, 255, 0.8);
-  border: 1px solid #666;
-  border-radius: 3px;
-  color: #191813;
-  padding: 2px 4px;
-  margin: 0;
-  line-height: 16px;
-  height: 22px;
-}
-
-.prosemirror menu select {
-  background: rgba(255, 255, 255, 0.8);
-  border: 1px solid #666;
-  border-radius: 3px;
-  color: #191813;
-  padding: 1px 4px;
-  height: 22px;
-}
-
 /* Toggle button */
-.toggle-edit-button {
-  background: rgba(0, 0, 0, 0.1);
-  border: 1px solid #7a7971;
-  border-radius: 3px;
-  padding: 2px 6px;
-  font-size: 12px;
-  line-height: 16px;
-  white-space: nowrap;
-  margin: 0;
+.core100 .toggle-edit-button {
+    width: 100%;
+    background: rgba(0, 0, 0, 0.core100 .1);
+    line-height: 16px;
+    white-space: nowrap;
+    margin: 0;
 }
 
-.toggle-edit-button:hover {
+.core100 .toggle-edit-button:hover {
   box-shadow: 0 0 5px var(--color-shadow-primary);
 }
 
-/* Read view */
-.read-view {
-  padding: 8px;
-  background: white;
-  border: 2px solid #782e22;
-  border-top: none;
-  border-radius: 0 0 3px 3px;
-  overflow-y: auto;
+/* Styling for Editor & ProseMirror menu */
+.core100 .editor-menu {
+    margin-top: 4px;
 }
 
-.read-view:empty::before {
-  content: "Click Edit to add content";
-  color: #666;
-  font-style: italic;
+.core100 .prosemirror menu {
+  background: rgba(100, 72, 176, 0.core100 .1);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius);
+  padding: 4px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
 }
+
+.core100 .prosemirror menu button {
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius);
+  color: var(--color-text);
+  padding: 2px 4px;
+  margin: 0;
+  line-height: 16px;
+  height: 24px;
+  width: auto; /* Override the previous width: 50% */
+  min-width: 24px;
+}
+
+.core100 .prosemirror menu button:hover {
+  background: var(--color-hover);
+  box-shadow: 0 0 5px var(--color-border);
+}
+
+.core100 .prosemirror menu select {
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius);
+  color: var(--color-text);
+  padding: 1px 4px;
+  height: 24px;
+}
+
+

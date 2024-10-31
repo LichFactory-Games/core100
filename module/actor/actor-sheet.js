@@ -16,24 +16,29 @@ export class Core100ActorSheet extends ActorSheet {
 
   /** @override */
   async getData() {
+    // Retrieve base context
     const context = await super.getData();
+
+    // Get a safe copy of actor data
     const actorData = this.actor.toObject(false);
 
-    // Add the actor's data to context.data for easier access, as well as flags
+    // Add the actor's data to context for easier access, as well as flags
     context.system = actorData.system;
     context.flags = actorData.flags;
+
+    // Organize skills
     context.skills = this._organizeSkills();
 
     // Enrich the text editors
     context.enrichedBiography = await TextEditor.enrichHTML(this.actor.system.biography, {
-      secrets: this.document.isOwner,
+      secrets: this.actor.isOwner,
       async: true,
       rollData: this.actor.getRollData(),
       relativeTo: this.actor
     });
 
     context.enrichedNotes = await TextEditor.enrichHTML(this.actor.system.notes, {
-      secrets: this.document.isOwner,
+      secrets: this.actor.isOwner,
       async: true,
       rollData: this.actor.getRollData(),
       relativeTo: this.actor
@@ -140,9 +145,21 @@ export class Core100ActorSheet extends ActorSheet {
       await this.actor.update({ [target]: content });
     }, 500)); // Debounce for 500ms to prevent too frequent saves
 
-
     // Everything below here is only needed if the sheet is editable
     if (!this.isEditable) return;
+
+    // Utility debounce function
+    function debounce(func, wait) {
+      let timeout;
+      return function executedFunction(...args) {
+        const later = () => {
+          clearTimeout(timeout);
+          func(...args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+      };
+    }
 
     // Add Skill
     html.find('.skill-create').click(this._onItemCreate.bind(this));
@@ -396,17 +413,4 @@ export class Core100ActorSheet extends ActorSheet {
       console.error("Error creating skill:", err);
     }
   }
-}
-
-// Utility debounce function
-function debounce(func, wait) {
-  let timeout;
-  return function executedFunction(...args) {
-    const later = () => {
-      clearTimeout(timeout);
-      func(...args);
-    };
-    clearTimeout(timeout);
-    timeout = setTimeout(later, wait);
-  };
 }
