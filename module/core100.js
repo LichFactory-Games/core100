@@ -21,10 +21,6 @@ function registerHandlebarsHelpers() {
   Handlebars.registerHelper("formatAttribute", function(attr) {
     return attr.charAt(0).toUpperCase() + attr.slice(1);
   });
-  // Custom Roll
-  Handlebars.registerHelper('targetRoll', function(target, label = "Target Check") {
-    return new Handlebars.SafeString(`${label} (${target}): [[/r 1d100 # vs ${target}]]`);
-  });
   // Register Handlebars helpers
   Handlebars.registerHelper('capitalize', function(str) {
     return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
@@ -177,66 +173,7 @@ Hooks.once("init", async function() {
 /* -------------------------------------------- */
 /*  Chat Message & Roll Handlers                */
 /* -------------------------------------------- */
-
-// Modify your renderChatMessage hook to handle more roll formats
-Hooks.on("renderChatMessage", (message, html, data) => {
-  html.find(".inline-roll").each((i, roll) => {
-    const formula = roll.dataset.formula;
-    const flavor = roll.dataset.flavor;
-    console.log("Roll data:", { formula, flavor });
-
-    // Check for various roll formats
-    let target = null;
-
-    // Check for "vs" format
-    if (flavor?.includes("vs")) {
-      const match = flavor.match(/vs\s*(\d+)/);
-      if (match) {
-        target = parseInt(match[1]);
-      }
-    }
-
-    // Check for preceding number if no target found
-    if (!target && formula === "1d100") {
-      let node = roll.previousSibling;
-      while (node) {
-        const text = node.textContent.trim();
-        const match = text.match(/(\d+)\s*$/); // Match number at end of text
-        if (match) {
-          target = parseInt(match[1]);
-          break;
-        }
-        node = node.previousSibling;
-      }
-    }
-
-    // If we found a target, process the roll
-    if (target) {
-      console.log("Processing roll with target:", target);
-      const tRoll = new TargetRoll("1d100", target, {});
-      tRoll.evaluate().then(() => {
-        // Update the displayed roll
-        const outcome = tRoll.outcome;
-        roll.style.color = outcome.outcomeStyle.split(": ")[1];
-        roll.title = `Target: ${target}\n${outcome.outcome}`;
-
-        // If this is the initial roll (not just hovering), show the full message
-        if (!roll.dataset.evaluated) {
-          roll.dataset.evaluated = true;
-          const messageContent = `
-            <h2>Target Check</h2>
-            <p>Target: ${target}</p>
-            <p>Roll: ${tRoll.total}</p>
-            <p>Outcome: <span style="${outcome.outcomeStyle}">${outcome.outcome}</span></p>
-          `;
-          roll.closest('.message-content').innerHTML = messageContent;
-        }
-      });
-    }
-  });
-});
-
-// Register chat command for /troll - this should be its own hook, not nested
+// Register chat command for /troll
 Hooks.on('chatMessage', (chatLog, message, chatData) => {
   if (message.startsWith('/troll')) {
     const [command, target, ...rest] = message.split(' ');
