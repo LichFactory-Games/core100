@@ -9,7 +9,8 @@ export const preloadHandlebarsTemplates = async function() {
     "systems/core100/templates/actor/actor-sheet.html",
     "systems/core100/templates/actor/parts/actor-attributes.html",
     // Item Sheet
-    "systems/core100/templates/item/item-sheet.html"
+    "systems/core100/templates/item/item-sheet.html",
+    "systems/core100/templates/chat/target-roll.hbs"
   ];
 
   return loadTemplates(templatePaths);
