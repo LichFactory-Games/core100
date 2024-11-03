@@ -50,64 +50,67 @@ function registerSettings() {
 /* -------------------------------------------- */
 
 class TargetRoll extends Roll {
-  constructor(formula, target, data, options) {
+  constructor(formula, target, skillName = '', data = {}, options = {}) {
     super(formula, data, options);
     this.target = target;
+    this.skillName = skillName;
     console.log("core100 | TargetRoll constructed:", this);
   }
 
   static fromData(data) {
-    console.log("core100 | TargetRoll fromData:", data);
-    return new this(data.formula, data.target, data.data, data.options);
+    // Make sure we pull skillName from the data when reconstructing
+    const roll = new this(data.formula, data.target, data.skillName, data.data, data.options);
+    roll._total = data.total;
+    roll._evaluated = data._evaluated;
+    roll.outcome = data.outcome;
+    return roll;
+  }
+
+  toJSON() {
+    const json = super.toJSON();
+    json.target = this.target;
+    json.skillName = this.skillName;  // Include skillName in serialized data
+    if (this.outcome) json.outcome = this.outcome;
+    console.log("core100 | TargetRoll toJSON:", json);
+    return json;
   }
 
   async evaluate(options = {}) {
     console.log("core100 | TargetRoll evaluate starting:", options);
-    // Remove the async option
     await super.evaluate(options);
     this.outcome = game.core100.evaluateRollOutcome(this.total, this.target);
     console.log("core100 | TargetRoll evaluate complete:", this);
     return this;
   }
 
-  toJSON() {
-    const json = super.toJSON();
-    json.target = this.target;
-    console.log("core100 | TargetRoll toJSON:", json);
-    return json;
-  }
-
   async toMessage(messageData={}, {rollMode=null, create=true}={}) {
     console.log("core100 | TargetRoll toMessage starting");
-
-    // Ensure roll is evaluated
     if (!this._evaluated) await this.evaluate();
 
     if (game.dice3d) {
-      console.log("core100 | Showing Dice So Nice animation from toMessage");
       await game.dice3d.showForRoll(this, game.user, true);
     }
 
     messageData = foundry.utils.mergeObject({
       speaker: ChatMessage.getSpeaker(),
-      flavor: messageData.flavor || null,
+      flavor: null,
       flags: messageData.flags || {},
       rolls: [this],
       sound: CONFIG.sounds.dice
     }, messageData);
 
     messageData.content = `
-      <div class="message-content">
-        <h2>Target Check</h2>
-        <p>Target: ${this.target}</p>
-        <p>Roll: ${this.total}</p>
-        <p>Outcome: <span style="${this.outcome.outcomeStyle}">${this.outcome.outcome}</span></p>
-      </div>
-    `;
+  <div class="message-content">
+    <h2 style="text-align: center;">${this.skillName ? `${this.skillName} Check` : 'Check'}</h2>
+    <p style="font-size: var(--font-size-20); font-weight: bold; text-align: center;">
+      <span class="tooltip" data-tooltip="Roll: ${this.total} vs. SV ${this.target}" style="${this.outcome.outcomeStyle}">
+        ${this.outcome.outcome}
+      </span>
+    </p>
+  </div>
+`;
 
     ChatMessage.applyRollMode(messageData, rollMode || game.settings.get('core', 'rollMode'));
-    console.log("core100 | TargetRoll toMessage creating with data:", messageData);
-
     if (create) return ChatMessage.create(messageData);
     return messageData;
   }

@@ -367,3 +367,49 @@
     flex-direction: column;
     height: 100%;
 }
+
+// Add to your system styles
+.target-roll {
+  background: #DDD;
+  padding: 1px 4px;
+  border: 1px solid #4b4a44;
+  border-radius: 2px;
+  white-space: nowrap;
+  word-break: break-all;
+
+  &:hover {
+    background: #c9c7b8;
+    color: #000;
+    text-shadow: 0 0 2px #fff;
+    cursor: pointer;
+  }
+
+  .target-number {
+    font-weight: bold;
+    color: #666;
+  }
+
+  i {
+    margin-right: 2px;
+    color: #7a7971;
+  }
+}
+
+  // Make it match Foundry's roll styling
+  .inline-roll.target-roll {
+    background: rgba(0, 0, 0, 0.1);
+    padding: 1px 4px;
+    border: 1px solid #999;
+    border-radius: 2px;
+    white-space: nowrap;
+    word-break: break-all;
+    color: #000;
+    font-size: var(--font-size-14);
+    line-height: var(--line-height-16);
+
+    &:hover, &:focus {
+      background: rgba(0, 0, 0, 0.2);
+    color: #000;
+    text-shadow: 0 0 2px var(--color-shadow-highlight);
+  }
+}
