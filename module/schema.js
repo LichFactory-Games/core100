@@ -37,7 +37,12 @@ export const skillTemplate = {
     successNumber: 0,
     specializations: [],
     hasAdvantage: false,
-    description: ""
+    description: "",
+    // New fields
+    isType: false,           // For skills like "Science (Type)" or "Languages (Type)"
+    possibleTypes: [],       // Array of possible types for Type skills
+    isPrerequisite: false,   // For skills marked with *
+    prerequisites: []        // Array of prerequisite skill IDs
   }
 };
 
@@ -83,6 +88,27 @@ export const CORE100_SCHEMA = {
         type: String,
         required: true,
         default: ""
+      },
+      // New fields in schema
+      isType: {
+        type: Boolean,
+        required: true,
+        default: false
+      },
+      possibleTypes: {
+        type: Array,
+        required: true,
+        default: []
+      },
+      isPrerequisite: {
+        type: Boolean,
+        required: true,
+        default: false
+      },
+      prerequisites: {
+        type: Array,
+        required: true,
+        default: []
       }
     }
   }

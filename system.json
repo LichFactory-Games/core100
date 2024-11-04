@@ -38,7 +38,14 @@
   "relationships": {
     "requires": []
   },
-  "packs": [],
+  "packs": [{
+    "name": "skills",
+    "label": "Core100 Skills",
+    "path": "packs/skills.db",
+    "type": "Item",
+    "system": "core100",
+    "locked": false
+  }],
   "system": [],
   "background": ""
 }
