@@ -207,29 +207,13 @@ export class Core100ActorSheet extends ActorSheet {
     event.preventDefault();
     const element = event.currentTarget;
     const attribute = element.dataset.attribute;
-
     const attrValue = this.actor.system.primaryAttributes[attribute].value;
     const attrLabel = this.actor.system.primaryAttributes[attribute].label;
 
-    const roll = new Roll("1d100");
+    const roll = new game.core100.TargetRoll("1d100", attrValue, attrLabel);
     await roll.evaluate();
-    const rollResult = roll.total;
-
-    const { outcome, outcomeStyle } = game.core100.evaluateRollOutcome(rollResult, attrValue);
-
-    const messageContent = `
-      <h2>${attrLabel} Check</h2>
-      <p>Target: ${attrValue}</p>
-      <p>Roll: ${rollResult}</p>
-      <p>Outcome: <span style="${outcomeStyle}">${outcome}</span></p>
-    `;
-
-    await ChatMessage.create({
-      user: game.user.id,
-      speaker: ChatMessage.getSpeaker({ actor: this.actor }),
-      content: messageContent,
-      rolls: [roll],
-      sound: CONFIG.sounds.dice
+    await roll.toMessage({
+      speaker: ChatMessage.getSpeaker({ actor: this.actor })
     });
   }
 
@@ -242,8 +226,6 @@ export class Core100ActorSheet extends ActorSheet {
     event.preventDefault();
     const element = event.currentTarget;
     const specDiv = element.closest('.specialization');
-
-    // Get the skill and specialization data
     const itemId = specDiv.dataset.itemId;
     const specIndex = Number(specDiv.dataset.specIndex);
     const skill = this.actor.items.get(itemId);
@@ -253,35 +235,16 @@ export class Core100ActorSheet extends ActorSheet {
       return;
     }
 
-    const successNumber = skill.system.successNumber;
-    const specializationName = skill.system.specializations[specIndex];
+    // Create specialized name
+    const skillName = `${skill.name}: ${skill.system.specializations[specIndex]}`;
 
-    // Roll with Advantage (two rolls, take the better)
-    const roll1 = new Roll("1d100");
-    const roll2 = new Roll("1d100");
+    // Create roll with advantage flag
+    const roll = new game.core100.TargetRoll("2d100kl", skill.system.successNumber, skillName);
+    roll.advantage = true; // Add flag for advantage
 
-    await roll1.evaluate();
-    await roll2.evaluate();
-
-    const rollResult = Math.min(roll1.total, roll2.total); // Take the better roll
-
-    // Get outcome using your existing method
-    const { outcome, outcomeStyle } = game.core100.evaluateRollOutcome(rollResult, successNumber);
-
-    const messageContent = `
-        <h2>${skill.name}: ${specializationName}</h2>
-        <p>Target: ${successNumber}</p>
-        <p>Rolls: ${roll1.total}, ${roll2.total} (taking ${rollResult})</p>
-        <p><em>Rolling with Advantage due to Specialization</em></p>
-        <p>Outcome: <span style="${outcomeStyle}">${outcome}</span></p>
-    `;
-
-    await ChatMessage.create({
-      user: game.user.id,
-      speaker: ChatMessage.getSpeaker({ actor: this.actor }),
-      content: messageContent,
-      rolls: [roll1, roll2],
-      sound: CONFIG.sounds.dice
+    await roll.evaluate();
+    await roll.toMessage({
+      speaker: ChatMessage.getSpeaker({ actor: this.actor })
     });
   }
 
@@ -296,32 +259,12 @@ export class Core100ActorSheet extends ActorSheet {
     const element = event.currentTarget;
     const itemId = $(element).closest("[data-item-id]").data("itemId");
     const skill = this.actor.items.get(itemId);
-
     if (!skill) return;
 
-    const successNumber = skill.system.successNumber;
-
-    // Single roll for base skill
-    const roll = new Roll("1d100");
+    const roll = new game.core100.TargetRoll("1d100", skill.system.successNumber, skill.name);
     await roll.evaluate();
-    const rollResult = roll.total;
-
-    // Get outcome and style based on the roll result
-    const { outcome, outcomeStyle } = game.core100.evaluateRollOutcome(rollResult, successNumber);
-
-    const messageContent = `
-        <h2>${skill.name} Check</h2>
-        <p>Target: ${successNumber}</p>
-        <p>Roll: ${rollResult}</p>
-        <p>Outcome: <span style="${outcomeStyle}">${outcome}</span></p>
-    `;
-
-    await ChatMessage.create({
-      user: game.user.id,
-      speaker: ChatMessage.getSpeaker({ actor: this.actor }),
-      content: messageContent,
-      rolls: [roll],
-      sound: CONFIG.sounds.dice
+    await roll.toMessage({
+      speaker: ChatMessage.getSpeaker({ actor: this.actor })
     });
   }
 

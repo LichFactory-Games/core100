@@ -86,11 +86,9 @@ class TargetRoll extends Roll {
   async toMessage(messageData={}, {rollMode=null, create=true}={}) {
     console.log("core100 | TargetRoll toMessage starting");
     if (!this._evaluated) await this.evaluate();
-
     if (game.dice3d) {
       await game.dice3d.showForRoll(this, game.user, true);
     }
-
     messageData = foundry.utils.mergeObject({
       speaker: ChatMessage.getSpeaker(),
       flavor: null,
@@ -99,17 +97,22 @@ class TargetRoll extends Roll {
       sound: CONFIG.sounds.dice
     }, messageData);
 
+    // Create tooltip text based on whether it's an advantage roll or not
+    const tooltipText = this.advantage ?
+          `Rolls: ${this.terms[0].results.map(r => r.result).join(', ')} (taking ${this.total}) vs. SV ${this.target}` :
+          `Roll: ${this.total} vs. SV ${this.target}`;
+
     messageData.content = `
   <div class="message-content">
     <h2 style="text-align: center;">${this.skillName ? `${this.skillName} Check` : 'Check'}</h2>
+    ${this.advantage ? '<p style="text-align: center;"><em>Rolling with Advantage</em></p>' : ''}
     <p style="font-size: var(--font-size-20); font-weight: bold; text-align: center;">
-      <span class="tooltip" data-tooltip="Roll: ${this.total} vs. SV ${this.target}" style="${this.outcome.outcomeStyle}">
+      <span class="tooltip" data-tooltip="${tooltipText}" style="${this.outcome.outcomeStyle}">
         ${this.outcome.outcome}
       </span>
     </p>
   </div>
 `;
-
     ChatMessage.applyRollMode(messageData, rollMode || game.settings.get('core', 'rollMode'));
     if (create) return ChatMessage.create(messageData);
     return messageData;
@@ -202,46 +205,39 @@ Hooks.once("init", async function() {
 /*  Chat Message & Roll Handlers                */
 /* -------------------------------------------- */
 // Register chat command for /troll
+// Register chat command for /troll
 Hooks.on('chatMessage', (chatLog, message, chatData) => {
   if (message.startsWith('/troll')) {
-    const [command, target, ...rest] = message.split(' ');
-    if (!target || isNaN(target)) {
-      ui.notifications.error("Usage: /troll <target> [comment]");
+    // Split the message into parts
+    const args = message.split(' ');
+
+    // Check if we have at least a target number
+    if (args.length < 2) {
+      ui.notifications.error("Usage: /troll <target> [name]");
       return false;
     }
 
-    // Create and evaluate the roll
-    const roll = new TargetRoll('1d100', parseInt(target), {});
+    // Find the last number in the arguments
+    const targetIndex = args.findIndex(arg => !isNaN(arg));
+    if (targetIndex === -1) {
+      ui.notifications.error("Usage: /troll <target> [name]");
+      return false;
+    }
 
-    console.log("core100 | Creating roll:", roll);
+    // Get target number
+    const target = parseInt(args[targetIndex]);
 
-    // Use Promise chain with evaluate()
+    // Get name (if provided) - join all words before the target number
+    const name = targetIndex > 1 ? args.slice(1, targetIndex).join(' ') : '';
+
+    // Create and evaluate the roll using your standard TargetRoll
+    const roll = new game.core100.TargetRoll('1d100', target, name);
+
+    // Evaluate and create message
     roll.evaluate().then(async () => {
-      console.log("core100 | Roll evaluated:", roll);
-
-      if (game.dice3d) {
-        console.log("core100 | Showing Dice So Nice animation");
-        await game.dice3d.showForRoll(roll, game.user, true);
-      }
-
-      const chatData = {
-        rolls: [roll],
-        flavor: rest.join(' '),
-        speaker: ChatMessage.getSpeaker(),
-        content: `
-          <div class="message-content">
-            <h2>Target Check</h2>
-            <p>Target: ${roll.target}</p>
-            <p>Roll: ${roll.total}</p>
-            <p>Outcome: <span style="${roll.outcome.outcomeStyle}">${roll.outcome.outcome}</span></p>
-          </div>
-        `,
-        sound: CONFIG.sounds.dice
-      };
-
-      console.log("core100 | Creating chat message with data:", chatData);
-      ChatMessage.applyRollMode(chatData, game.settings.get('core', 'rollMode'));
-      await ChatMessage.create(chatData);
+      await roll.toMessage({
+        speaker: ChatMessage.getSpeaker()
+      });
     });
 
     return false;
