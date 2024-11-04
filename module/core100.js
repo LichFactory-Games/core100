@@ -7,7 +7,7 @@ import { Core100Actor } from "./actor/actor.js";
 import { Core100ActorSheet } from "./actor/actor-sheet.js";
 import { Core100Item } from "./item/item.js";
 import { Core100ItemSheet } from "./item/item-sheet.js";
-import { registerEnrichTest } from "./helpers/enrichers.mjs";
+import { registerSuccessRollEnricher } from "./helpers/enrichers.mjs";
 
 /* -------------------------------------------- */
 /*  Handlebars Helpers                          */
@@ -197,7 +197,8 @@ Hooks.once("init", async function() {
   // Register Handlebars Helpers
   registerHandlebarsHelpers();
 
-  registerEnrichTest();
+  // Register Roll Enrichers
+  registerSuccessRollEnricher();
 
 });
 
