@@ -1,57 +1,64 @@
 {
-  "id": "core100",
-  "title": "Core 100 System",
-  "description": "A d100-based RPG system emphasizing attribute-derived skills and specializations",
-  "version": "0.2.0",
-  "compatibility": {
-    "minimum": "11",
-    "verified": "12",
-    "maximum": "12"
-  },
-  "authors": [
-    {
-      "name": "Colin McLear",
-      "email": "",
-      "url": "",
-      "discord": ""
-    }
-  ],
-  "esmodules": [
-    "module/core100.js"
-  ],
-  "styles": [
-    "styles/core100.css"
-  ],
-  "languages": [
-    {
-      "lang": "en",
-      "name": "English",
-      "path": "languages/en.json"
-    }
-  ],
-  "socket": false,
-  "gridDistance": 1,
-  "gridUnits": "m",
-  "primaryTokenAttribute": "hlt",
-  "secondaryTokenAttribute": "poi",
-  "url": "",
-  "manifest": "https://github.com/LichFactory-Games/core100/releases/download/v0.2.0/system.json",
-  "download": "https://github.com/LichFactory-Games/core100/releases/download/v0.2.0/core100-v0.2.0.zip",
-  "license": "LICENSE.txt",
-  "renderPriority": 0,
-  "relationships": {
-    "requires": []
-  },
-  "packs": [
-    {
-      "name": "skills",
-      "label": "Core100 Skills",
-      "path": "packs/skills.db",
-      "type": "Item",
-      "system": "core100",
-      "locked": false
-    }
-  ],
-  "system": [],
-  "background": ""
+    "id": "core100",
+    "title": "Core 100 System",
+    "description": "A d100-based RPG system emphasizing attribute-derived skills and specializations",
+    "version": "0.2.0",
+    "compatibility": {
+        "minimum": "11",
+        "verified": "12",
+        "maximum": "12"
+    },
+    "authors": [
+        {
+            "name": "Colin McLear",
+            "email": "",
+            "url": "",
+            "discord": ""
+        }
+    ],
+    "esmodules": [
+        "module/core100.js"
+    ],
+    "styles": [
+        "styles/core100.css"
+    ],
+    "languages": [
+        {
+            "lang": "en",
+            "name": "English",
+            "path": "languages/en.json"
+        }
+    ],
+    "socket": false,
+    "gridDistance": 1,
+    "gridUnits": "m",
+    "primaryTokenAttribute": "hlt",
+    "secondaryTokenAttribute": "poi",
+    "url": "",
+    "manifest": "https://github.com/LichFactory-Games/core100/releases/download/v0.2.0/system.json",
+    "download": "https://github.com/LichFactory-Games/core100/releases/download/v0.2.0/core100-v0.2.0.zip",
+    "license": "LICENSE.txt",
+    "renderPriority": 0,
+    "relationships": {
+        "requires": []
+    },
+    "packs": [
+        {
+            "name": "skills",
+            "label": "Core100 Skills",
+            "path": "packs/skills.db",
+            "type": "Item",
+            "system": "core100",
+            "locked": false
+        },
+        {
+            "name": "core100-macros",
+            "label": "Core 100 Macros",
+            "path": "packs/macros.db",
+            "type": "Macro",
+            "private": false
+        }
+    ],
+    "system": [],
+    "background": ""
 }
