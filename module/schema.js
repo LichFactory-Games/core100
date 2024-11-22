@@ -35,6 +35,7 @@ export const skillTemplate = {
     governing: "",
     difficulty: "average",
     successNumber: 0,
+    epBonus: 0,
     specializations: [],
     hasAdvantage: false,
     description: "",

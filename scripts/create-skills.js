@@ -188,7 +188,7 @@ const educationSkills = [
     type: "skill",
     img: "icons/svg/mystery-man.svg",
     system: {
-      area: "interpersonal",
+      area: "education",
       governing: "ins", // Insight for analysis and understanding of economic systems
       difficulty: "demanding",
       isType: false,
