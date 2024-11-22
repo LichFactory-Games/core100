@@ -2,7 +2,7 @@
   "id": "core100",
   "title": "Core 100 System",
   "description": "A d100-based RPG system emphasizing attribute-derived skills and specializations",
-  "version": "0.3.2",
+  "version": "0.4.0",
   "compatibility": {
     "minimum": "11",
     "verified": "12",
@@ -35,8 +35,8 @@
   "primaryTokenAttribute": "hlt",
   "secondaryTokenAttribute": "poi",
   "url": "",
-  "manifest": "https://github.com/LichFactory-Games/core100/releases/download/v0.3.2/system.json",
-  "download": "https://github.com/LichFactory-Games/core100/releases/download/v0.3.2/core100-v0.3.2.zip",
+  "manifest": "https://github.com/LichFactory-Games/core100/releases/download/v0.4.0/system.json",
+  "download": "https://github.com/LichFactory-Games/core100/releases/download/v0.4.0/core100-v0.4.0.zip",
   "license": "LICENSE.txt",
   "renderPriority": 0,
   "relationships": {
