@@ -99,8 +99,8 @@ class TargetRoll extends Roll {
 
     // Create tooltip text based on whether it's an advantage roll or not
     const tooltipText = this.advantage ?
-          `Rolls: ${this.terms[0].results.map(r => r.result).join(', ')} (taking ${this.total}) vs. SV ${this.target}` :
-          `Roll: ${this.total} vs. SV ${this.target}`;
+          `Rolls: ${this.terms[0].results.map(r => r.result).join(', ')} (taking ${this.total}) vs. SN ${this.target}` :
+          `Roll: ${this.total} vs. SN ${this.target}`;
 
     messageData.content = `
   <div class="message-content">
