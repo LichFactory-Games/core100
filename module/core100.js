@@ -135,20 +135,14 @@ Hooks.once("init", async function() {
         if (isDoubles) {
           outcome = "Ace";
           outcomeStyle = "color: goldenrod";
-        } else if (rollResult <= Math.floor(target / 2)) {
+        } else {
           outcome = "Success";
           outcomeStyle = "color: green";
-        } else {
-          outcome = "Partial Success";
-          outcomeStyle = "color: darkblue";
         }
       } else { // Failure cases
         if (isDoubles) {
           outcome = "Fumble";
           outcomeStyle = "color: red";
-        } else if (rollResult <= Math.floor((100 - target) / 2) + target) {
-          outcome = "Partial Failure";
-          outcomeStyle = "color: brown";
         } else {
           outcome = "Failure";
           outcomeStyle = "color: crimson";
