@@ -31,6 +31,13 @@
     margin-bottom: 10px;
 }
 
+
+.sheet header.sheet-header img {
+    flex: 0 0 100px;
+    height: 100px;
+    margin-right: 6px;
+}
+
 .core100 .sheet-header input {
     border: none;
         border-radius: var(--border-radius);
