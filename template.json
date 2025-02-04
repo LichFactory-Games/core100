@@ -32,7 +32,7 @@
             "label": "Health",
             "description": "Physical well-being (VGR / 5)"
           },
-          "wd": {
+          "wds": {
             "value": 0,
             "max": 0,
             "label": "Wounds",
