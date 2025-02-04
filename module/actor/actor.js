@@ -2,8 +2,14 @@ export class Core100Actor extends Actor {
   /** @override */
   prepareData() {
     super.prepareData();
-
     const actorData = this;
+
+    // Ensure flags exist
+    if (!actorData.system.flags) {
+      actorData.system.flags = {
+        easyUpbringing: false
+      };
+    }
 
     // Ensure primary attributes exist
     if (!actorData.system.primaryAttributes) {
@@ -19,7 +25,7 @@ export class Core100Actor extends Actor {
     if (!actorData.system.derivedAttributes) {
       actorData.system.derivedAttributes = {
         hlt: { value: 0, max: 0, label: "Health" },
-        wd: { value: 0, max: 0, label: "Wounds" },
+        wds: { value: 0, max: 0, label: "Wounds" },
         grt: { value: 0, max: 0, label: "Grit" },
         poi: { value: 0, max: 0, label: "Poise" }
       };
@@ -45,13 +51,15 @@ export class Core100Actor extends Actor {
     }
 
     // Wounds = HLT / 5
-    system.derivedAttributes.wd.max = Math.floor(system.derivedAttributes.hlt.max / 5);
-    if (!system.derivedAttributes.wd.value) {
-      system.derivedAttributes.wd.value = system.derivedAttributes.wd.max;
+    system.derivedAttributes.wds.max = Math.floor(system.derivedAttributes.hlt.max / 5);
+    if (!system.derivedAttributes.wds.value) {
+      system.derivedAttributes.wds.value = system.derivedAttributes.wds.max;
     }
 
-    // Grit = (VGR + PRS) / 5
-    system.derivedAttributes.grt.max = Math.floor((vgr + prs) / 5);
+    // Grit = (VGR + PRS) / 5 with Easy penalty
+    const baseGrit = Math.floor((vgr + prs) / 5);
+    const easyPenalty = system.flags.easyUpbringing ? 5 : 0;
+    system.derivedAttributes.grt.max = baseGrit - easyPenalty;
     if (!system.derivedAttributes.grt.value) {
       system.derivedAttributes.grt.value = system.derivedAttributes.grt.max;
     }

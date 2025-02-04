@@ -6,6 +6,7 @@ export class Core100ActorSheet extends ActorSheet {
       template: "systems/core100/templates/actor/actor-sheet.html",
       width: 600,
       height: 450,
+      submitOnChange: true,
       tabs: [{
         navSelector: ".sheet-navigation",
         contentSelector: ".sheet-body",
